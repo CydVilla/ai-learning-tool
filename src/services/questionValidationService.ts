@@ -1,4 +1,4 @@
-import { Question, CodeExercise, QuestionAttempt, LearningTrack, DifficultyLevel } from '../types';
+import { Question, CodeExercise, LearningTrack, DifficultyLevel, QuestionType } from '../types';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -7,106 +7,79 @@ export interface ValidationResult {
   suggestions: string[];
 }
 
-export interface FeedbackData {
-  isCorrect: boolean;
-  score: number;
-  timeBonus: number;
-  accuracyBonus: number;
-  streakBonus: number;
-  totalScore: number;
-  feedback: string;
-  explanation: string;
-  hints: string[];
-  nextSteps: string[];
+export interface SanitizationResult {
+  sanitized: any;
+  changes: string[];
+  warnings: string[];
 }
 
-export interface QuestionAnalysis {
-  difficulty: DifficultyLevel;
-  topic: string;
-  concepts: string[];
-  commonMistakes: string[];
-  learningObjectives: string[];
-}
-
-export class QuestionValidationService {
+class QuestionValidationService {
   /**
-   * Validate multiple choice question
+   * Validate a question object
    */
-  static validateMultipleChoiceQuestion(question: Question): ValidationResult {
+  validateQuestion(question: any): ValidationResult {
     const errors: string[] = [];
     const warnings: string[] = [];
     const suggestions: string[] = [];
 
-    // Required fields validation
-    if (!question.question || question.question.trim().length === 0) {
-      errors.push('Question text is required');
+    // Check required fields
+    const requiredFields = ['id', 'question', 'options', 'correctAnswer', 'explanation', 'difficulty', 'track', 'xp', 'type'];
+    requiredFields.forEach(field => {
+      if (!question[field]) {
+        errors.push(`Missing required field: ${field}`);
+      }
+    });
+
+    if (errors.length > 0) {
+      return { isValid: false, errors, warnings, suggestions };
     }
 
-    if (!question.options || question.options.length < 2) {
+    // Validate question text
+    if (!question.question || typeof question.question !== 'string') {
+      errors.push('Question text is required and must be a string');
+    } else if (question.question.length < 10) {
+      errors.push('Question text must be at least 10 characters long');
+    } else if (question.question.length > 500) {
+      errors.push('Question text must not exceed 500 characters');
+    }
+
+    // Validate options
+    if (!Array.isArray(question.options)) {
+      errors.push('Options must be an array');
+    } else if (question.options.length < 2) {
       errors.push('At least 2 options are required');
+    } else if (question.options.length > 6) {
+      errors.push('Maximum 6 options allowed');
     }
 
-    if (!question.correctAnswer) {
-      errors.push('Correct answer is required');
+    // Validate correct answer
+    if (!question.correctAnswer || typeof question.correctAnswer !== 'string') {
+      errors.push('Correct answer is required and must be a string');
+    } else if (!question.options.includes(question.correctAnswer)) {
+      errors.push('Correct answer must be one of the provided options');
     }
 
-    if (!question.difficulty) {
-      errors.push('Difficulty level is required');
+    // Validate difficulty
+    const validDifficulties: DifficultyLevel[] = ['beginner', 'intermediate', 'advanced'];
+    if (!validDifficulties.includes(question.difficulty)) {
+      errors.push(`Difficulty must be one of: ${validDifficulties.join(', ')}`);
     }
 
-    // Options validation
-    if (question.options) {
-      if (question.options.length > 6) {
-        warnings.push('Too many options (more than 6) may confuse users');
-      }
-
-      if (question.options.length < 3) {
-        suggestions.push('Consider adding more options for better challenge');
-      }
-
-      // Check for duplicate options
-      const uniqueOptions = new Set(question.options);
-      if (uniqueOptions.size !== question.options.length) {
-        errors.push('Duplicate options found');
-      }
-
-      // Check if correct answer is in options
-      if (question.correctAnswer && !question.options.includes(question.correctAnswer)) {
-        errors.push('Correct answer must be one of the provided options');
-      }
-
-      // Check option lengths
-      question.options.forEach((option, index) => {
-        if (option.length > 200) {
-          warnings.push(`Option ${index + 1} is very long (${option.length} characters)`);
-        }
-        if (option.length < 10) {
-          suggestions.push(`Option ${index + 1} could be more descriptive`);
-        }
-      });
+    // Validate track
+    const validTracks: LearningTrack[] = ['html', 'css', 'javascript'];
+    if (!validTracks.includes(question.track)) {
+      errors.push(`Track must be one of: ${validTracks.join(', ')}`);
     }
 
-    // Question text validation
-    if (question.question) {
-      if (question.question.length > 500) {
-        warnings.push('Question text is very long (more than 500 characters)');
-      }
-      if (question.question.length < 20) {
-        suggestions.push('Question could be more descriptive');
-      }
+    // Validate XP
+    if (typeof question.xp !== 'number' || isNaN(question.xp) || question.xp < 0) {
+      errors.push('XP must be a positive number');
     }
 
-    // Difficulty validation
-    if (question.difficulty) {
-      const validDifficulties = ['beginner', 'intermediate', 'advanced'];
-      if (!validDifficulties.includes(question.difficulty)) {
-        errors.push('Invalid difficulty level');
-      }
-    }
-
-    // XP validation
-    if (question.xp && (question.xp < 5 || question.xp > 50)) {
-      warnings.push('XP value should be between 5 and 50');
+    // Validate type
+    const validTypes: QuestionType[] = ['multiple-choice', 'fill-in-the-blank', 'true-false', 'code-exercise'];
+    if (!validTypes.includes(question.type)) {
+      errors.push(`Question type must be one of: ${validTypes.join(', ')}`);
     }
 
     return {
@@ -118,362 +91,183 @@ export class QuestionValidationService {
   }
 
   /**
-   * Validate code exercise
+   * Validate a code exercise object
    */
-  static validateCodeExercise(exercise: CodeExercise): ValidationResult {
+  validateCodeExercise(exercise: any): ValidationResult {
     const errors: string[] = [];
     const warnings: string[] = [];
     const suggestions: string[] = [];
 
-    // Required fields validation
-    if (!exercise.description || exercise.description.trim().length === 0) {
-      errors.push('Exercise description is required');
-    }
-
-    if (!exercise.testCases || exercise.testCases.length === 0) {
-      errors.push('At least one test case is required');
-    }
-
-    if (!exercise.difficulty) {
-      errors.push('Difficulty level is required');
-    }
-
-    // Test cases validation
-    if (exercise.testCases) {
-      if (exercise.testCases.length > 10) {
-        warnings.push('Too many test cases (more than 10) may overwhelm users');
+    // Check required fields
+    const requiredFields = ['id', 'description', 'testCases', 'explanation', 'difficulty', 'track', 'xp', 'type'];
+    requiredFields.forEach(field => {
+      if (!exercise[field]) {
+        errors.push(`Missing required field: ${field}`);
       }
+    });
 
-      exercise.testCases.forEach((testCase, index) => {
-        if (!testCase.input) {
-          errors.push(`Test case ${index + 1}: Input is required`);
+    if (errors.length > 0) {
+      return { isValid: false, errors, warnings, suggestions };
+    }
+
+    // Validate description
+    if (!exercise.description || typeof exercise.description !== 'string') {
+      errors.push('Description is required and must be a string');
+    } else if (exercise.description.length < 20) {
+      errors.push('Description must be at least 20 characters long');
+    }
+
+    // Validate test cases
+    if (!Array.isArray(exercise.testCases)) {
+      errors.push('Test cases must be an array');
+    } else if (exercise.testCases.length < 1) {
+      errors.push('At least 1 test case is required');
+    } else if (exercise.testCases.length > 10) {
+      errors.push('Maximum 10 test cases allowed');
+    }
+
+    // Validate difficulty
+    const validDifficulties: DifficultyLevel[] = ['beginner', 'intermediate', 'advanced'];
+    if (!validDifficulties.includes(exercise.difficulty)) {
+      errors.push(`Difficulty must be one of: ${validDifficulties.join(', ')}`);
+    }
+
+    // Validate track
+    const validTracks: LearningTrack[] = ['html', 'css', 'javascript'];
+    if (!validTracks.includes(exercise.track)) {
+      errors.push(`Track must be one of: ${validTracks.join(', ')}`);
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+      warnings,
+      suggestions
+    };
+  }
+
+  /**
+   * Sanitize a question object
+   */
+  sanitizeQuestion(question: any): SanitizationResult {
+    const changes: string[] = [];
+    const warnings: string[] = [];
+    const sanitized = { ...question };
+
+    // Sanitize question text
+    if (sanitized.question) {
+      const original = sanitized.question;
+      sanitized.question = this.sanitizeText(sanitized.question);
+      if (original !== sanitized.question) {
+        changes.push('Question text was sanitized');
+      }
+    }
+
+    // Sanitize options
+    if (sanitized.options && Array.isArray(sanitized.options)) {
+      sanitized.options = sanitized.options.map((option: string, index: number) => {
+        const original = option;
+        const sanitized = this.sanitizeText(option);
+        if (original !== sanitized) {
+          changes.push(`Option ${index + 1} was sanitized`);
         }
-        if (!testCase.expectedOutput) {
-          errors.push(`Test case ${index + 1}: Expected output is required`);
-        }
+        return sanitized;
       });
     }
 
-    // Description validation
-    if (exercise.description) {
-      if (exercise.description.length > 1000) {
-        warnings.push('Description is very long (more than 1000 characters)');
-      }
-      if (exercise.description.length < 50) {
-        suggestions.push('Description could be more detailed');
-      }
-    }
-
-    // Difficulty validation
-    if (exercise.difficulty) {
-      const validDifficulties = ['beginner', 'intermediate', 'advanced'];
-      if (!validDifficulties.includes(exercise.difficulty)) {
-        errors.push('Invalid difficulty level');
+    // Sanitize correct answer
+    if (sanitized.correctAnswer) {
+      const original = sanitized.correctAnswer;
+      sanitized.correctAnswer = this.sanitizeText(sanitized.correctAnswer);
+      if (original !== sanitized.correctAnswer) {
+        changes.push('Correct answer was sanitized');
       }
     }
 
-    // XP validation
-    if (exercise.xp && (exercise.xp < 10 || exercise.xp > 100)) {
-      warnings.push('XP value should be between 10 and 100 for code exercises');
+    // Sanitize explanation
+    if (sanitized.explanation) {
+      const original = sanitized.explanation;
+      sanitized.explanation = this.sanitizeText(sanitized.explanation);
+      if (original !== sanitized.explanation) {
+        changes.push('Explanation was sanitized');
+      }
     }
 
     return {
-      isValid: errors.length === 0,
-      errors,
-      warnings,
-      suggestions
+      sanitized,
+      changes,
+      warnings
     };
   }
 
   /**
-   * Generate feedback for question attempt
+   * Sanitize a code exercise object
    */
-  static generateFeedback(
-    question: Question | CodeExercise,
-    attempt: QuestionAttempt,
-    track: LearningTrack
-  ): FeedbackData {
-    const isCorrect = attempt.isCorrect;
-    const timeSpent = attempt.timeSpent;
-    const difficulty = question.difficulty;
-
-    // Base score calculation
-    let baseScore = isCorrect ? question.xp : Math.round(question.xp * 0.1);
-    
-    // Time bonus (faster answers get more points)
-    let timeBonus = 0;
-    if (isCorrect) {
-      const timeLimit = difficulty === 'beginner' ? 60 : difficulty === 'intermediate' ? 45 : 30;
-      if (timeSpent < timeLimit * 0.5) {
-        timeBonus = Math.round(question.xp * 0.2); // 20% bonus for very fast
-      } else if (timeSpent < timeLimit * 0.8) {
-        timeBonus = Math.round(question.xp * 0.1); // 10% bonus for fast
-      }
-    }
-
-    // Accuracy bonus (based on user's overall accuracy)
-    let accuracyBonus = 0;
-    if (isCorrect && attempt.accuracy >= 90) {
-      accuracyBonus = Math.round(question.xp * 0.15); // 15% bonus for high accuracy
-    } else if (isCorrect && attempt.accuracy >= 80) {
-      accuracyBonus = Math.round(question.xp * 0.1); // 10% bonus for good accuracy
-    }
-
-    // Streak bonus
-    let streakBonus = 0;
-    if (isCorrect && attempt.streak >= 5) {
-      streakBonus = Math.round(question.xp * 0.1); // 10% bonus for good streak
-    }
-
-    const totalScore = baseScore + timeBonus + accuracyBonus + streakBonus;
-
-    // Generate feedback message
-    let feedback = '';
-    let explanation = '';
-    const hints: string[] = [];
-    const nextSteps: string[] = [];
-
-    if (isCorrect) {
-      if (timeSpent < 10) {
-        feedback = 'Lightning fast! ⚡ You answered correctly in record time!';
-      } else if (timeSpent < 30) {
-        feedback = 'Great job! 🎉 You got it right quickly!';
-      } else {
-        feedback = 'Correct! ✅ You got the right answer!';
-      }
-      
-      if (timeBonus > 0) {
-        feedback += ` You earned a time bonus of ${timeBonus} XP!`;
-      }
-      if (accuracyBonus > 0) {
-        feedback += ` You earned an accuracy bonus of ${accuracyBonus} XP!`;
-      }
-      if (streakBonus > 0) {
-        feedback += ` You earned a streak bonus of ${streakBonus} XP!`;
-      }
-    } else {
-      feedback = 'Not quite right. ❌ Let\'s learn from this!';
-      
-      // Provide hints based on the question type
-      if ('options' in question) {
-        hints.push('Read the question carefully and consider each option');
-        hints.push('Look for keywords that might give you clues');
-        hints.push('Eliminate obviously wrong answers first');
-      } else {
-        hints.push('Check your code for syntax errors');
-        hints.push('Make sure you\'re handling edge cases');
-        hints.push('Test your solution with the provided test cases');
-      }
-    }
-
-    // Generate explanation
-    if (question.explanation) {
-      explanation = question.explanation;
-    } else if (isCorrect) {
-      explanation = 'You correctly identified the answer. Keep up the great work!';
-    } else {
-      explanation = 'Take your time to understand the concept and try again.';
-    }
-
-    // Generate next steps
-    if (isCorrect) {
-      nextSteps.push('Continue to the next question');
-      nextSteps.push('Try a more challenging difficulty level');
-      nextSteps.push('Review related concepts to reinforce learning');
-    } else {
-      nextSteps.push('Review the explanation carefully');
-      nextSteps.push('Try similar questions to practice');
-      nextSteps.push('Consider reviewing the fundamentals');
-    }
-
-    return {
-      isCorrect,
-      score: baseScore,
-      timeBonus,
-      accuracyBonus,
-      streakBonus,
-      totalScore,
-      feedback,
-      explanation,
-      hints,
-      nextSteps
-    };
-  }
-
-  /**
-   * Analyze question for learning insights
-   */
-  static analyzeQuestion(question: Question | CodeExercise, track: LearningTrack): QuestionAnalysis {
-    const difficulty = question.difficulty;
-    
-    // Extract concepts based on track and question content
-    let concepts: string[] = [];
-    let topic = '';
-    let commonMistakes: string[] = [];
-    let learningObjectives: string[] = [];
-
-    if (track === 'html') {
-      topic = 'HTML Fundamentals';
-      concepts = ['tags', 'attributes', 'structure', 'semantic markup'];
-      commonMistakes = [
-        'Forgetting to close tags',
-        'Using deprecated HTML elements',
-        'Missing alt attributes on images',
-        'Incorrect nesting of elements'
-      ];
-      learningObjectives = [
-        'Understand HTML document structure',
-        'Learn semantic HTML elements',
-        'Master form elements and validation',
-        'Apply accessibility best practices'
-      ];
-    } else if (track === 'css') {
-      topic = 'CSS Styling';
-      concepts = ['selectors', 'properties', 'layout', 'responsive design'];
-      commonMistakes = [
-        'Not understanding CSS specificity',
-        'Overusing !important',
-        'Not considering responsive design',
-        'Poor use of flexbox and grid'
-      ];
-      learningObjectives = [
-        'Master CSS selectors and specificity',
-        'Learn layout techniques (flexbox, grid)',
-        'Understand responsive design principles',
-        'Apply modern CSS features'
-      ];
-    } else if (track === 'javascript') {
-      topic = 'JavaScript Programming';
-      concepts = ['variables', 'functions', 'DOM manipulation', 'async programming'];
-      commonMistakes = [
-        'Confusing == and === operators',
-        'Not understanding hoisting',
-        'Poor error handling',
-        'Memory leaks with event listeners'
-      ];
-      learningObjectives = [
-        'Master JavaScript fundamentals',
-        'Learn DOM manipulation',
-        'Understand asynchronous programming',
-        'Apply modern ES6+ features'
-      ];
-    }
-
-    // Adjust based on difficulty
-    if (difficulty === 'beginner') {
-      concepts = concepts.slice(0, 2);
-      learningObjectives = learningObjectives.slice(0, 2);
-    } else if (difficulty === 'intermediate') {
-      concepts = concepts.slice(0, 3);
-      learningObjectives = learningObjectives.slice(0, 3);
-    }
-
-    return {
-      difficulty,
-      topic,
-      concepts,
-      commonMistakes,
-      learningObjectives
-    };
-  }
-
-  /**
-   * Get question difficulty rating
-   */
-  static getDifficultyRating(question: Question | CodeExercise): number {
-    const difficulty = question.difficulty;
-    const baseRating = difficulty === 'beginner' ? 1 : difficulty === 'intermediate' ? 2 : 3;
-    
-    // Adjust based on question characteristics
-    let adjustment = 0;
-    
-    if ('options' in question) {
-      // Multiple choice adjustments
-      if (question.options.length > 4) adjustment += 0.2;
-      if (question.question.length > 200) adjustment += 0.1;
-      if (question.codeExample) adjustment += 0.3;
-    } else {
-      // Code exercise adjustments
-      if (exercise.testCases.length > 5) adjustment += 0.2;
-      if (exercise.description.length > 300) adjustment += 0.1;
-      if (exercise.starterCode) adjustment -= 0.1;
-    }
-    
-    return Math.min(Math.max(baseRating + adjustment, 1), 5);
-  }
-
-  /**
-   * Validate question attempt
-   */
-  static validateAttempt(attempt: QuestionAttempt): ValidationResult {
-    const errors: string[] = [];
+  sanitizeCodeExercise(exercise: any): SanitizationResult {
+    const changes: string[] = [];
     const warnings: string[] = [];
-    const suggestions: string[] = [];
+    const sanitized = { ...exercise };
 
-    if (!attempt.questionId) {
-      errors.push('Question ID is required');
+    // Sanitize description
+    if (sanitized.description) {
+      const original = sanitized.description;
+      sanitized.description = this.sanitizeText(sanitized.description);
+      if (original !== sanitized.description) {
+        changes.push('Description was sanitized');
+      }
     }
 
-    if (!attempt.userAnswer) {
-      errors.push('User answer is required');
-    }
-
-    if (attempt.timeSpent < 0) {
-      errors.push('Time spent cannot be negative');
-    }
-
-    if (attempt.timeSpent > 600) { // 10 minutes
-      warnings.push('Time spent seems unusually long');
-    }
-
-    if (attempt.accuracy < 0 || attempt.accuracy > 100) {
-      errors.push('Accuracy must be between 0 and 100');
-    }
-
-    if (attempt.streak < 0) {
-      errors.push('Streak cannot be negative');
+    // Sanitize test cases
+    if (sanitized.testCases && Array.isArray(sanitized.testCases)) {
+      sanitized.testCases = sanitized.testCases.map((testCase: any, index: number) => {
+        const original = testCase;
+        const sanitized = { ...testCase };
+        
+        if (sanitized.input) {
+          const originalInput = sanitized.input;
+          sanitized.input = this.sanitizeText(sanitized.input);
+          if (originalInput !== sanitized.input) {
+            changes.push(`Test case ${index + 1} input was sanitized`);
+          }
+        }
+        
+        if (sanitized.expectedOutput) {
+          const originalOutput = sanitized.expectedOutput;
+          sanitized.expectedOutput = this.sanitizeText(sanitized.expectedOutput);
+          if (originalOutput !== sanitized.expectedOutput) {
+            changes.push(`Test case ${index + 1} output was sanitized`);
+          }
+        }
+        
+        return sanitized;
+      });
     }
 
     return {
-      isValid: errors.length === 0,
-      errors,
-      warnings,
-      suggestions
+      sanitized,
+      changes,
+      warnings
     };
   }
 
   /**
-   * Get question statistics
+   * Sanitize text content
    */
-  static getQuestionStats(attempts: QuestionAttempt[]): {
-    totalAttempts: number;
-    correctAttempts: number;
-    averageTime: number;
-    averageAccuracy: number;
-    difficulty: string;
-  } {
-    if (attempts.length === 0) {
-      return {
-        totalAttempts: 0,
-        correctAttempts: 0,
-        averageTime: 0,
-        averageAccuracy: 0,
-        difficulty: 'unknown'
-      };
+  private sanitizeText(text: string): string {
+    if (!text || typeof text !== 'string') {
+      return '';
     }
 
-    const correctAttempts = attempts.filter(attempt => attempt.isCorrect).length;
-    const averageTime = attempts.reduce((sum, attempt) => sum + attempt.timeSpent, 0) / attempts.length;
-    const averageAccuracy = attempts.reduce((sum, attempt) => sum + attempt.accuracy, 0) / attempts.length;
-
-    return {
-      totalAttempts: attempts.length,
-      correctAttempts,
-      averageTime: Math.round(averageTime),
-      averageAccuracy: Math.round(averageAccuracy),
-      difficulty: attempts[0].difficulty
-    };
+    return text
+      .trim()
+      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+      .replace(/[<>]/g, '') // Remove potential HTML tags
+      .replace(/javascript:/gi, '') // Remove javascript: protocol
+      .replace(/on\w+\s*=/gi, '') // Remove event handlers
+      .substring(0, 1000); // Limit length
   }
 }
 
-export default QuestionValidationService;
+// Export singleton instance
+export const questionValidationService = new QuestionValidationService();
+export default questionValidationService;
