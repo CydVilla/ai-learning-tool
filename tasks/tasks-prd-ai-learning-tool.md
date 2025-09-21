@@ -49,13 +49,13 @@
   - [x] 1.5 Create .env.example file with OpenAI API key template
   - [x] 1.6 Update package.json scripts for development workflow
 
-- [ ] 2.0 Core Application Structure and Routing
-  - [ ] 2.1 Create main Layout component with navigation
-  - [ ] 2.2 Set up React Router with routes for each learning track
-  - [ ] 2.3 Create Home/Dashboard component
-  - [ ] 2.4 Create 404 Not Found page
-  - [ ] 2.5 Implement responsive navigation menu
-  - [ ] 2.6 Add loading states and error boundaries
+- [x] 2.0 Core Application Structure and Routing
+  - [x] 2.1 Create main Layout component with navigation
+  - [x] 2.2 Set up React Router with routes for each learning track
+  - [x] 2.3 Create Home/Dashboard component
+  - [x] 2.4 Create 404 Not Found page
+  - [x] 2.5 Implement responsive navigation menu
+  - [x] 2.6 Add loading states and error boundaries
 
 - [ ] 3.0 User Progress Management System
   - [ ] 3.1 Create UserProgressContext with TypeScript interfaces
