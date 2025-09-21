@@ -153,7 +153,7 @@ class ErrorHandlingService {
           message: `HTTP ${status}: ${statusText}`,
           details: data,
           timestamp,
-          retryable: status >= 500,
+          retryable: (status || 0) >= 500,
           userMessage: 'An unexpected error occurred. Please try again.'
         };
     }

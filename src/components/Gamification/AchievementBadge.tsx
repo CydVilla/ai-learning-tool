@@ -351,8 +351,8 @@ const AchievementBadge: React.FC<AchievementBadgeProps> = ({
 
   return (
     <BadgeContainer 
-      rarity={achievement.rarity} 
-      unlocked={achievement.unlocked}
+      rarity={achievement.rarity || 'common'} 
+      unlocked={achievement.unlocked || false}
       isNew={isNew}
     >
       <BackgroundPattern />
@@ -363,11 +363,11 @@ const AchievementBadge: React.FC<AchievementBadgeProps> = ({
         </NewBadge>
       )}
       
-      <RarityBadge rarity={achievement.rarity}>
-        {getRarityName(achievement.rarity)}
+      <RarityBadge rarity={achievement.rarity || 'common'}>
+        {getRarityName(achievement.rarity || 'common')}
       </RarityBadge>
       
-      {!achievement.unlocked && (
+      {!(achievement.unlocked || false) && (
         <LockedOverlay>
           🔒 Locked
         </LockedOverlay>
@@ -375,33 +375,33 @@ const AchievementBadge: React.FC<AchievementBadgeProps> = ({
       
       <BadgeHeader>
         <BadgeIcon 
-          rarity={achievement.rarity} 
-          unlocked={achievement.unlocked}
+          rarity={achievement.rarity || 'common'} 
+          unlocked={achievement.unlocked || false}
           isNew={isNew}
         >
           {achievement.icon}
         </BadgeIcon>
         <BadgeInfo>
-          <BadgeTitle>{achievement.title}</BadgeTitle>
+          <BadgeTitle>{achievement.name}</BadgeTitle>
           <BadgeSubtitle>{achievement.description}</BadgeSubtitle>
         </BadgeInfo>
       </BadgeHeader>
 
       <BadgeDescription>
-        {achievement.detailedDescription}
+        {achievement.description}
       </BadgeDescription>
 
       <BadgeStats>
         <StatItem>
-          <StatValue>{getRarityIcon(achievement.rarity)}</StatValue>
+          <StatValue>{getRarityIcon(achievement.rarity || 'common')}</StatValue>
           <StatLabel>Rarity</StatLabel>
         </StatItem>
         <StatItem>
-          <StatValue>{achievement.xpReward}</StatValue>
+          <StatValue>50</StatValue>
           <StatLabel>XP Reward</StatLabel>
         </StatItem>
         <StatItem>
-          <StatValue>{achievement.unlocked ? '✓' : '○'}</StatValue>
+          <StatValue>{(achievement.unlocked || false) ? '✓' : '○'}</StatValue>
           <StatLabel>Status</StatLabel>
         </StatItem>
         <StatItem>
@@ -410,7 +410,7 @@ const AchievementBadge: React.FC<AchievementBadgeProps> = ({
         </StatItem>
       </BadgeStats>
 
-      {showProgress && achievement.progress && !achievement.unlocked && (
+      {showProgress && achievement.progress && !(achievement.unlocked || false) && (
         <ProgressSection>
           <ProgressHeader>
             <ProgressLabel>Progress</ProgressLabel>
@@ -419,7 +419,7 @@ const AchievementBadge: React.FC<AchievementBadgeProps> = ({
           <ProgressBar>
             <ProgressFill 
               percentage={progressPercentage} 
-              rarity={achievement.rarity} 
+              rarity={achievement.rarity || 'common'} 
             />
           </ProgressBar>
         </ProgressSection>

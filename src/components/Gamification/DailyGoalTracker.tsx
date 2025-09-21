@@ -153,7 +153,7 @@ const GoalItem = styled.div<{ completed: boolean }>`
   `}
 `;
 
-const GoalIcon = styled.div<{ completed: boolean }>`
+const GoalStatusIcon = styled.div<{ completed: boolean }>`
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -400,9 +400,9 @@ const DailyGoalTracker: React.FC = () => {
           
           return (
             <GoalItem key={index} completed={completed}>
-              <GoalIcon completed={completed}>
+              <GoalStatusIcon completed={completed}>
                 {completed ? '✓' : getGoalIcon(goal.type)}
-              </GoalIcon>
+              </GoalStatusIcon>
               <GoalDetails>
                 <GoalName>{getGoalName(goal.type)}</GoalName>
                 <GoalDescription>{getGoalDescription(goal.type, goal.target)}</GoalDescription>

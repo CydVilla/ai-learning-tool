@@ -733,7 +733,7 @@ class StorageService {
    */
   private cleanupExpiredCache(): void {
     const now = Date.now();
-    for (const [key, item] of this.cache.entries()) {
+    for (const [key, item] of Array.from(this.cache.entries())) {
       if (now > item.expiry) {
         this.cache.delete(key);
       }

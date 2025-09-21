@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import { LearningTrack } from '../../types';
 import { getTrackColors } from '../../utils/trackColors';
 
@@ -181,22 +181,22 @@ const QuickNavSection = styled.div`
 `;
 
 const QuickNavButton = styled.button<{ 
-  trackColor: string; 
-  isActive: boolean;
-  isCompleted: boolean;
-  isCurrent: boolean;
+  $trackColor: string; 
+  $isActive: boolean;
+  $isCompleted: boolean;
+  $isCurrent: boolean;
 }>`
   background: ${props => {
-    if (props.isCurrent) return props.trackColor;
-    if (props.isCompleted) return '#4ecdc4';
-    if (props.isActive) return 'rgba(255, 255, 255, 0.2)';
+    if (props.$isCurrent) return props.$trackColor;
+    if (props.$isCompleted) return '#4ecdc4';
+    if (props.$isActive) return 'rgba(255, 255, 255, 0.2)';
     return 'rgba(255, 255, 255, 0.1)';
   }};
   color: white;
   border: 1px solid ${props => {
-    if (props.isCurrent) return props.trackColor;
-    if (props.isCompleted) return '#4ecdc4';
-    if (props.isActive) return 'rgba(255, 255, 255, 0.3)';
+    if (props.$isCurrent) return props.$trackColor;
+    if (props.$isCompleted) return '#4ecdc4';
+    if (props.$isActive) return 'rgba(255, 255, 255, 0.3)';
     return 'rgba(255, 255, 255, 0.2)';
   }};
   padding: 0.5rem 0.75rem;
@@ -213,8 +213,8 @@ const QuickNavButton = styled.button<{
   
   &:hover {
     background: ${props => {
-      if (props.isCurrent) return props.trackColor;
-      if (props.isCompleted) return '#4ecdc4';
+      if (props.$isCurrent) return props.$trackColor;
+      if (props.$isCompleted) return '#4ecdc4';
       return 'rgba(255, 255, 255, 0.3)';
     }};
     transform: translateY(-1px);
@@ -224,7 +224,7 @@ const QuickNavButton = styled.button<{
     transform: translateY(0);
   }
   
-  ${props => props.isCurrent && `
+  ${props => props.$isCurrent && css`
     animation: ${pulse} 2s infinite;
   `}
 `;
@@ -297,10 +297,10 @@ const QuestionNavigation: React.FC<QuestionNavigationProps> = ({
       buttons.push(
         <QuickNavButton
           key={i}
-          trackColor={colors.primary}
-          isActive={status.isActive}
-          isCompleted={status.isCompleted}
-          isCurrent={status.isCurrent}
+          $trackColor={colors.primary}
+          $isActive={status.isActive}
+          $isCompleted={status.isCompleted}
+          $isCurrent={status.isCurrent}
           onClick={() => onGoToQuestion(i)}
         >
           {status.isCompleted ? '✓' : i}

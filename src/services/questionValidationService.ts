@@ -77,7 +77,7 @@ class QuestionValidationService {
     }
 
     // Validate type
-    const validTypes: QuestionType[] = ['multiple-choice', 'fill-in-the-blank', 'true-false', 'code-exercise'];
+    const validTypes: QuestionType[] = ['multiple-choice', 'fill-in-the-blank', 'code-exercise'];
     if (!validTypes.includes(question.type)) {
       errors.push(`Question type must be one of: ${validTypes.join(', ')}`);
     }

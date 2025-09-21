@@ -149,7 +149,7 @@ class QuestionSearchService {
     });
 
     // Type suggestions
-    const types: QuestionType[] = ['multiple-choice', 'fill-in-the-blank', 'true-false', 'code-exercise'];
+    const types: QuestionType[] = ['multiple-choice', 'fill-in-the-blank', 'code-exercise'];
     types.forEach(type => {
       if (type.includes(queryLower)) {
         const count = this.getCountByType(questions, exercises, type);
@@ -179,7 +179,7 @@ class QuestionSearchService {
 
     // Extract terms from questions
     questions.forEach(question => {
-      const words = this.extractWords(question.question);
+      const words = this.extractWords(question.content || question.question || '');
       words.forEach(word => {
         if (word.length > 3) {
           terms[word] = (terms[word] || 0) + 1;
@@ -189,7 +189,7 @@ class QuestionSearchService {
 
     // Extract terms from exercises
     exercises.forEach(exercise => {
-      const words = this.extractWords(exercise.description);
+      const words = this.extractWords(exercise.description || exercise.content || '');
       words.forEach(word => {
         if (word.length > 3) {
           terms[word] = (terms[word] || 0) + 1;
@@ -229,7 +229,6 @@ class QuestionSearchService {
     const byType = {
       'multiple-choice': 0,
       'fill-in-the-blank': 0,
-      'true-false': 0,
       'code-exercise': 0
     };
 
@@ -280,10 +279,10 @@ class QuestionSearchService {
       }
 
       // XP range filter
-      if (filters.minXP !== undefined && item.xp < filters.minXP) {
+      if (filters.minXP !== undefined && (item.xp || item.points || 0) < filters.minXP) {
         return false;
       }
-      if (filters.maxXP !== undefined && item.xp > filters.maxXP) {
+      if (filters.maxXP !== undefined && (item.xp || item.points || 0) > filters.maxXP) {
         return false;
       }
 
@@ -337,10 +336,10 @@ class QuestionSearchService {
     let text = '';
 
     if ('question' in item) {
-      text += item.question + ' ';
+      text += (item.content || item.question || '') + ' ';
     }
     if ('description' in item) {
-      text += item.description + ' ';
+      text += (item.description || item.content || '') + ' ';
     }
     if (item.explanation) {
       text += item.explanation + ' ';
@@ -377,7 +376,7 @@ class QuestionSearchService {
           comparison = difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty];
           break;
         case 'xp':
-          comparison = a.xp - b.xp;
+          comparison = (a.xp || a.points || 0) - (b.xp || b.points || 0);
           break;
         case 'id':
           comparison = a.id.localeCompare(b.id);

@@ -2,6 +2,7 @@
   "name": "ai-learning-tool",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://cydvilla.github.io/ai-learning-tool",
   "dependencies": {
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.0",
@@ -13,6 +14,7 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/styled-components": "^5.1.34",
     "axios": "^1.12.2",
+    "openai": "^5.22.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.9.1",
@@ -32,7 +34,9 @@
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "type-check": "tsc --noEmit",
-    "preview": "npm run build && npx serve -s build"
+    "preview": "npm run build && npx serve -s build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -54,6 +58,7 @@
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.8.0",
-    "@testing-library/user-event": "^14.6.1"
+    "@testing-library/user-event": "^14.6.1",
+    "gh-pages": "^6.3.0"
   }
 }

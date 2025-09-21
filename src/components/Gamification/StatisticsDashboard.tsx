@@ -302,10 +302,10 @@ const BackgroundPattern = styled.div`
 `;
 
 const StatisticsDashboard: React.FC = () => {
-  const { userProgress } = useUserProgress();
-  const { getTotalXP, getTrackProgress } = useProgressTracking();
+  const { userProgress, getTotalXP } = useUserProgress();
+  const { getTrackProgress } = useProgressTracking();
   const { getLevelInfo, getXPRank } = useXPSystem();
-  const { getStreakInfo } = useStreakManagement();
+  const { getStreakStatistics } = useStreakManagement();
 
   const [weeklyData, setWeeklyData] = useState([
     { day: 'Mon', questions: 3, xp: 30 },
@@ -326,7 +326,7 @@ const StatisticsDashboard: React.FC = () => {
   ]);
 
   const levelInfo = getLevelInfo();
-  const streakInfo = getStreakInfo();
+  const streakInfo = getStreakStatistics();
   const totalXP = getTotalXP();
   const rank = getXPRank();
 
@@ -353,7 +353,7 @@ const StatisticsDashboard: React.FC = () => {
     {
       title: 'Current Streak',
       subtitle: 'Days in a row',
-      value: streakInfo.currentStreak,
+      value: streakInfo?.currentStreak || 0,
       label: 'Days',
       icon: '🔥',
       color: '#ff6b6b'

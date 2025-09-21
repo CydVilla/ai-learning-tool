@@ -128,7 +128,7 @@ class CodeFeedbackService {
       const testResults = await this.executeCode(
         userCode,
         track,
-        exercise.testCases
+        exercise.testCases || []
       );
 
       // Calculate score based on test results
@@ -140,7 +140,7 @@ class CodeFeedbackService {
       const aiFeedback = await openaiService.generateCodeFeedback({
         code: userCode,
         language: track,
-        testCases: exercise.testCases,
+        testCases: exercise.testCases || [] || [],
         actualOutputs: testResults.map(result => result.output)
       });
 
@@ -153,7 +153,7 @@ class CodeFeedbackService {
 
       // Combine test results with test cases
       const combinedTestResults = testResults.map((result, index) => ({
-        testCase: exercise.testCases[index],
+        testCase: exercise.testCases?.[index] || { input: '', expectedOutput: '', description: '' },
         passed: result.passed,
         output: result.output,
         error: result.error
@@ -186,7 +186,7 @@ class CodeFeedbackService {
       const feedback = await openaiService.generateCodeFeedback({
         code,
         language,
-        testCases: exercise.testCases
+        testCases: exercise.testCases || []
       });
 
       // Analyze code quality metrics
@@ -238,7 +238,7 @@ class CodeFeedbackService {
       const feedback = await openaiService.generateCodeFeedback({
         code: userCode,
         language: track,
-        testCases: exercise.testCases
+        testCases: exercise.testCases || []
       });
 
       // Generate progressive hints based on attempt count
@@ -392,7 +392,7 @@ class CodeFeedbackService {
       const feedback = await openaiService.generateCodeFeedback({
         code,
         language,
-        testCases: exercise.testCases
+        testCases: exercise.testCases || []
       });
 
       return {

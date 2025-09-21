@@ -163,6 +163,15 @@ const Home: React.FC = () => {
             Master functions, DOM manipulation, and more.
           </TrackDescription>
         </TrackCard>
+        
+        <TrackCard to="/ai-custom">
+          <TrackIcon color="#9b59b6">🤖</TrackIcon>
+          <TrackTitle>AI Custom</TrackTitle>
+          <TrackDescription>
+            Create personalized quizzes on any coding topic using AI. 
+            Choose your subject, difficulty, and question count!
+          </TrackDescription>
+        </TrackCard>
       </TrackGrid>
     </HomeContainer>
   );

@@ -11,14 +11,21 @@ export interface Question {
   track: LearningTrack;
   type: QuestionType;
   difficulty: DifficultyLevel;
-  title: string;
+  title?: string;
   content: string;
+  question?: string; // Legacy property for backward compatibility
   options?: string[]; // For multiple choice questions
-  correctAnswer: string | string[];
+  correctAnswer?: string | string[];
   explanation: string;
   points: number;
+  xp?: number; // Legacy property for backward compatibility
   timeLimit?: number; // in seconds
-  tags: string[];
+  tags?: string[];
+  codeExample?: string | null;
+  feedback?: {
+    correct: string;
+    incorrect: string;
+  };
 }
 
 export interface CodeExercise extends Question {
@@ -26,6 +33,8 @@ export interface CodeExercise extends Question {
   starterCode: string;
   expectedOutput?: string;
   testCases?: TestCase[];
+  description?: string; // Legacy property for backward compatibility
+  hints?: string[];
 }
 
 export interface TestCase {
@@ -45,6 +54,16 @@ export interface TrackProgress {
   lastActivityDate: string;
   accuracy: number; // percentage
   timeSpent: number; // in minutes
+}
+
+export interface UserStatistics {
+  totalQuestionsAnswered: number;
+  totalCorrectAnswers: number;
+  averageAccuracy: number; // percentage
+  totalTimeSpent: number; // in minutes
+  favoriteTrack: LearningTrack;
+  questionsPerDay: number;
+  averageSessionLength: number; // in minutes
 }
 
 export interface UserProgress {
@@ -70,6 +89,12 @@ export interface Achievement {
   icon: string;
   unlockedAt: string;
   category: 'streak' | 'xp' | 'accuracy' | 'completion' | 'special';
+  rarity?: 'common' | 'rare' | 'epic' | 'legendary';
+  unlocked?: boolean;
+  progress?: {
+    current: number;
+    target: number;
+  };
 }
 
 export interface UserStatistics {

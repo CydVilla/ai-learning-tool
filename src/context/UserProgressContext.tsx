@@ -6,10 +6,11 @@ import {
   QuestionAttempt, 
   UserSettings,
   TrackProgress,
-  Achievement
+  Achievement,
+  UserStatistics
 } from '../types';
 import { StreakService } from '../services/streakService';
-import { StorageService } from '../services/storageService';
+import { storageService } from '../services/storageService';
 
 // Initial state
 const initialUserProgress: UserProgress = {
@@ -233,7 +234,7 @@ export const UserProgressProvider: React.FC<UserProgressProviderProps> = ({ chil
   useEffect(() => {
     const loadProgress = () => {
       try {
-        const savedProgress = StorageService.loadUserProgress();
+        const savedProgress = storageService.loadUserProgress();
         if (savedProgress) {
           dispatch({ type: 'LOAD_PROGRESS', payload: savedProgress });
         } else {
@@ -251,7 +252,7 @@ export const UserProgressProvider: React.FC<UserProgressProviderProps> = ({ chil
   useEffect(() => {
     if (state.userProgress) {
       try {
-        StorageService.saveUserProgress(state.userProgress);
+        storageService.saveUserProgress(state.userProgress);
       } catch (error) {
         console.error('Failed to save progress:', error);
       }
@@ -356,9 +357,9 @@ export const UserProgressProvider: React.FC<UserProgressProviderProps> = ({ chil
 
 // Helper function to get track from question ID (simplified)
 const getTrackFromQuestionId = (questionId: string): LearningTrack => {
-  if (questionId.startsWith('html-')) return 'html';
-  if (questionId.startsWith('css-')) return 'css';
-  if (questionId.startsWith('js-')) return 'javascript';
+  if (questionId.startsWith('html_')) return 'html';
+  if (questionId.startsWith('css_')) return 'css';
+  if (questionId.startsWith('javascript_') || questionId.startsWith('js_')) return 'javascript';
   return 'html'; // default
 };
 

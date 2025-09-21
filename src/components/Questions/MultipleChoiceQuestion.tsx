@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import { Question, QuestionType, LearningTrack } from '../../types';
 import { getTrackColors } from '../../utils/trackColors';
 
@@ -153,7 +153,9 @@ const OptionButton = styled.button<{
   transition: all 0.3s ease;
   text-align: left;
   position: relative;
-  animation: ${props => props.isIncorrect ? `${shake} 0.5s ease-in-out` : 'none'};
+  ${props => props.isIncorrect && css`
+    animation: ${shake} 0.5s ease-in-out;
+  `}
   
   &:hover {
     ${props => !props.disabled && `
@@ -207,14 +209,17 @@ const OptionText = styled.div`
   line-height: 1.4;
 `;
 
-const FeedbackSection = styled.div<{ show: boolean }>`
+const FeedbackSection = styled.div<{ $show: boolean }>`
   margin-top: 1.5rem;
   padding: 1.5rem;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   border-left: 4px solid #4ecdc4;
-  animation: ${props => props.show ? `${slideIn} 0.3s ease-out` : 'none'};
-  display: ${props => props.show ? 'block' : 'none'};
+  display: ${props => props.$show ? 'block' : 'none'};
+  
+  ${props => props.$show && css`
+    animation: ${slideIn} 0.3s ease-out;
+  `}
 `;
 
 const FeedbackTitle = styled.h4`
@@ -294,7 +299,7 @@ const Timer = styled.div<{ trackColor: string; timeLeft: number; totalTime: numb
   gap: 0.5rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   
-  ${props => props.timeLeft < props.totalTime * 0.2 && `
+  ${props => props.timeLeft < props.totalTime * 0.2 && css`
     animation: ${pulse} 1s infinite;
     background: #ff6b6b;
   `}
@@ -424,7 +429,7 @@ const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({
               {question.difficulty.charAt(0).toUpperCase() + question.difficulty.slice(1)}
             </MetaBadge>
             <MetaBadge color={colors.secondary}>
-              {question.xp} XP
+              {question.points} XP
             </MetaBadge>
             <MetaBadge color={colors.accent}>
               Question {question.id}
@@ -435,17 +440,13 @@ const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({
 
       <QuestionContent>
         <QuestionText>
-          {question.question}
+          {question.content}
         </QuestionText>
 
-        {question.codeExample && (
-          <CodeBlock>
-            {question.codeExample}
-          </CodeBlock>
-        )}
+        {/* Code example removed - not available in Question interface */}
 
         <OptionsContainer>
-          {question.options.map((option, index) => {
+          {(question.options || []).map((option, index) => {
             const letter = String.fromCharCode(65 + index); // A, B, C, D
             const isSelected = selectedAnswer === option;
             const isCorrect = isAnswered && option === question.correctAnswer;
@@ -478,12 +479,12 @@ const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({
         </OptionsContainer>
 
         {showFeedback && isAnswered && (
-          <FeedbackSection show={isAnswered}>
+          <FeedbackSection $show={isAnswered}>
             <FeedbackTitle>
               {isCorrect ? '✅ Correct!' : '❌ Incorrect'}
             </FeedbackTitle>
             <FeedbackText>
-              {isCorrect ? question.feedback?.correct : question.feedback?.incorrect}
+              {isCorrect ? 'Correct! Well done!' : 'Incorrect. Try again!'}
             </FeedbackText>
             {question.explanation && (
               <ExplanationText>

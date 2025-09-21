@@ -22,7 +22,7 @@ const XP_REWARDS = {
 };
 
 // Level progression thresholds
-const LEVEL_THRESHOLDS = [
+export const LEVEL_THRESHOLDS = [
   0, 50, 120, 200, 300, 420, 560, 720, 900, 1100, // Levels 1-10
   1320, 1560, 1820, 2100, 2400, 2720, 3060, 3420, 3800, 4200, // Levels 11-20
   4620, 5060, 5520, 6000, 6500, 7020, 7560, 8120, 8700, 9300 // Levels 21-30

@@ -141,7 +141,7 @@ const MilestoneBadge = styled.div`
 `;
 
 const StreakDisplay: React.FC = () => {
-  const { userProgress, getCurrentStreak, getStreakInfo } = useUserProgress();
+  const { userProgress, getCurrentStreak } = useUserProgress();
 
   if (!userProgress) {
     return (
@@ -157,7 +157,6 @@ const StreakDisplay: React.FC = () => {
   }
 
   const currentStreak = getCurrentStreak();
-  const streakInfo = getStreakInfo();
   const nextMilestone = StreakService.getNextStreakMilestone(currentStreak);
   const progress = StreakService.getStreakProgress(currentStreak);
   const motivation = StreakService.getStreakMotivation(currentStreak);
@@ -179,7 +178,7 @@ const StreakDisplay: React.FC = () => {
       
       <StreakLabel>Current Streak</StreakLabel>
       <StreakSubtext>
-        Longest: {streakInfo?.longestStreak || 0} days
+        Longest: {userProgress.longestStreak || 0} days
       </StreakSubtext>
 
       {nextMilestone && (

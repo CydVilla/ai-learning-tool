@@ -100,17 +100,21 @@ Return the response as JSON with this exact structure:
         { role: 'user', content: `Explain ${concept} for ${difficulty} level ${track} developers.` }
       ];
 
-      const response = await openaiService.makeRequest(messages, 0.7);
-      const content = response.choices[0].message.content;
-      const data = JSON.parse(content);
+      const response = await openaiService.generateExplanation({
+        question: `Explain ${concept}`,
+        userAnswer: '',
+        correctAnswer: '',
+        track: track
+      });
+      const data = response;
 
       return {
         concept,
-        definition: data.definition || `Explanation of ${concept}`,
-        examples: data.examples || [],
-        commonMistakes: data.commonMistakes || [],
-        bestPractices: data.bestPractices || [],
-        relatedTopics: data.relatedTopics || []
+        definition: data.explanation || `Explanation of ${concept}`,
+        examples: [],
+        commonMistakes: [],
+        bestPractices: [],
+        relatedTopics: data.relatedConcepts || []
       };
     } catch (error) {
       console.error('Error generating concept explanation:', error);
@@ -332,11 +336,7 @@ Return the response as JSON with this exact structure:
    * Get question text for AI processing
    */
   private getQuestionText(question: Question | CodeExercise): string {
-    if ('question' in question) {
-      return question.question;
-    } else {
-      return question.description;
-    }
+    return question.content || question.question || '';
   }
 
   /**
@@ -352,7 +352,7 @@ Return the response as JSON with this exact structure:
       explanation: `The correct answer is "${correctAnswer}". Your answer "${userAnswer}" was not correct. Please review the concept and try again.`,
       hints: this.getBaseHints(question, track),
       relatedConcepts: [track.toUpperCase(), 'Programming Fundamentals'],
-      examples: this.generateExamples(question, track, 'beginner'),
+      examples: [],
       nextSteps: ['Review the concept', 'Try similar exercises', 'Ask for help if needed'],
       difficulty: 'beginner',
       personalized: false

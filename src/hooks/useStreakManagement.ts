@@ -35,22 +35,24 @@ export const useStreakManagement = () => {
     questionsAnswered: number,
     tracks: LearningTrack[]
   ) => {
-    if (!streakData) return;
+    if (!streakData || !userProgress) return;
 
-    const updatedStreakData = StreakService.updateStreakData(
-      streakData,
-      xpEarned,
-      questionsAnswered,
-      tracks
-    );
-
-    setStreakData(updatedStreakData);
-    setIsAtRisk(StreakService.isStreakAtRisk(updatedStreakData.lastActivityDate));
-    setDaysUntilLost(StreakService.getDaysUntilStreakLost(updatedStreakData.lastActivityDate));
-
-    // Update the context
+    // Simple streak update - just update the context
+    // The actual streak logic is handled in the UserProgressContext
     updateStreak();
-  }, [streakData, updateStreak]);
+    
+    // Update local streak data
+    const today = new Date().toISOString().split('T')[0];
+    const updatedStreakData = {
+      ...streakData,
+      lastActivityDate: today,
+      currentStreak: userProgress.currentStreak + 1
+    };
+    
+    setStreakData(updatedStreakData);
+    setIsAtRisk(StreakService.isStreakAtRisk(today));
+    setDaysUntilLost(StreakService.getDaysUntilStreakLost(today));
+  }, [streakData, updateStreak, userProgress]);
 
   /**
    * Get streak milestones

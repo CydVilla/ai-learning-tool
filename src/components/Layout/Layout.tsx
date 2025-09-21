@@ -174,6 +174,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <NavLink to="/html" onClick={closeMobileMenu}>HTML</NavLink>
             <NavLink to="/css" onClick={closeMobileMenu}>CSS</NavLink>
             <NavLink to="/javascript" onClick={closeMobileMenu}>JavaScript</NavLink>
+            <NavLink to="/ai-custom" onClick={closeMobileMenu}>🤖 AI Custom</NavLink>
           </NavLinks>
           <MobileMenuButton onClick={toggleMobileMenu}>
             {isMobileMenuOpen ? '✕' : '☰'}

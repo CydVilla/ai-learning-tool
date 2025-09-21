@@ -433,17 +433,6 @@ export const questionTypeConfigs: { [key in QuestionType]: QuestionTypeConfig } 
     hintsAllowed: 2,
     attemptsAllowed: 2
   },
-  'true-false': {
-    type: 'true-false',
-    name: 'True or False',
-    description: 'Determine if a statement is true or false',
-    icon: '✅',
-    color: '#4caf50',
-    baseXP: 8,
-    timeLimit: 30,
-    hintsAllowed: 1,
-    attemptsAllowed: 1
-  },
   'code-exercise': {
     type: 'code-exercise',
     name: 'Code Exercise',
@@ -602,7 +591,7 @@ export const getCategoryStats = (): {
     css: cssCategories.length,
     javascript: javascriptCategories.length
   };
-  const categoriesByDifficulty = {
+  const categoriesByDifficultyCount = {
     beginner: categoriesByDifficulty.beginner.length,
     intermediate: categoriesByDifficulty.intermediate.length,
     advanced: categoriesByDifficulty.advanced.length
@@ -613,7 +602,7 @@ export const getCategoryStats = (): {
   return {
     totalCategories,
     categoriesByTrack,
-    categoriesByDifficulty,
+    categoriesByDifficulty: categoriesByDifficultyCount,
     totalXP,
     totalQuestions
   };

@@ -397,10 +397,10 @@ class QuestionImportExportService {
         row.push(this.escapeCSV(item.question || ''));
         row.push('');
         row.push(this.escapeCSV(JSON.stringify(item.options || [])));
-        row.push(this.escapeCSV(item.correctAnswer || ''));
+        row.push(this.escapeCSV(Array.isArray(item.correctAnswer) ? JSON.stringify(item.correctAnswer) : (item.correctAnswer || '')));
       } else {
         row.push('');
-        row.push(this.escapeCSV(item.description || ''));
+        row.push(this.escapeCSV(('description' in item ? item.description : item.content) || ''));
         row.push('');
         row.push('');
       }
@@ -408,7 +408,7 @@ class QuestionImportExportService {
       row.push(this.escapeCSV(item.explanation || ''));
       row.push(this.escapeCSV(('codeExample' in item ? item.codeExample : '') || ''));
       row.push(this.escapeCSV(('starterCode' in item ? item.starterCode : '') || ''));
-      row.push(this.escapeCSV(('testCases' in item ? JSON.stringify(item.testCases) : '') || ''));
+      row.push(this.escapeCSV(('testCases' in item && item.testCases ? JSON.stringify(item.testCases) : '') || ''));
       
       return row.join(',');
     });
@@ -438,10 +438,10 @@ class QuestionImportExportService {
           text += `\nCorrect Answer: ${item.correctAnswer}\n\n`;
         }
       } else {
-        text += `Description: ${item.description}\n\n`;
-        if (item.testCases) {
+        text += `Description: ${('description' in item ? item.description : item.content) || ''}\n\n`;
+        if ('testCases' in item && item.testCases) {
           text += `Test Cases:\n`;
-          item.testCases.forEach((testCase, i) => {
+          item.testCases.forEach((testCase: any, i: number) => {
             text += `  ${i + 1}. Input: ${testCase.input} -> Output: ${testCase.expectedOutput}\n`;
           });
           text += `\n`;

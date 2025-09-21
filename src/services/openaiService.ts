@@ -1,8 +1,13 @@
-import axios from 'axios';
+import OpenAI from 'openai';
 import { Question, CodeExercise, LearningTrack, DifficultyLevel, QuestionType } from '../types';
 
-const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
 const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
+
+// Initialize OpenAI client
+const openai = new OpenAI({
+  apiKey: OPENAI_API_KEY,
+  dangerouslyAllowBrowser: true // Required for client-side usage
+});
 
 interface OpenAIResponse {
   id: string;
@@ -51,11 +56,9 @@ interface ExplanationRequest {
 
 class OpenAIService {
   private apiKey: string;
-  private baseURL: string;
 
   constructor() {
     this.apiKey = OPENAI_API_KEY || '';
-    this.baseURL = OPENAI_API_URL;
     
     if (!this.apiKey) {
       console.warn('OpenAI API key not found. Please set REACT_APP_OPENAI_API_KEY in your .env file.');
@@ -68,25 +71,39 @@ class OpenAIService {
     }
 
     try {
-      const response = await axios.post(this.baseURL, {
+      const completion = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
-        messages,
+        messages: messages as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
         temperature,
         max_tokens: 1000,
         top_p: 1,
         frequency_penalty: 0,
-        presence_penalty: 0
-      }, {
-        headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json'
-        }
+        presence_penalty: 0,
       });
 
-      return response.data;
+      // Convert OpenAI response to our expected format
+      return {
+        id: completion.id,
+        object: completion.object,
+        created: completion.created,
+        model: completion.model,
+        choices: completion.choices.map(choice => ({
+          index: choice.index,
+          message: {
+            role: choice.message.role,
+            content: choice.message.content || '',
+          },
+          finish_reason: choice.finish_reason || 'stop',
+        })),
+        usage: {
+          prompt_tokens: completion.usage?.prompt_tokens || 0,
+          completion_tokens: completion.usage?.completion_tokens || 0,
+          total_tokens: completion.usage?.total_tokens || 0,
+        },
+      };
     } catch (error: any) {
-      console.error('OpenAI API Error:', error.response?.data || error.message);
-      throw new Error(`OpenAI API Error: ${error.response?.data?.error?.message || error.message}`);
+      console.error('OpenAI API Error:', error);
+      throw new Error(`OpenAI API Error: ${error.message || 'Unknown error'}`);
     }
   }
 

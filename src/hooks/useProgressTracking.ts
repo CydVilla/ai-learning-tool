@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useUserProgress } from '../context/UserProgressContext';
-import { ProgressService } from '../services/progressService';
+import { ProgressService, LEVEL_THRESHOLDS } from '../services/progressService';
 import { LearningTrack, QuestionAttempt, DifficultyLevel } from '../types';
 
 export const useProgressTracking = () => {
@@ -83,8 +83,8 @@ export const useProgressTracking = () => {
       xpToNext,
       totalXP: trackProgress.totalXP,
       progressPercentage: trackProgress.totalXP > 0 ? 
-        ((trackProgress.totalXP - ProgressService['LEVEL_THRESHOLDS'][level - 1]) / 
-         (ProgressService['LEVEL_THRESHOLDS'][level] - ProgressService['LEVEL_THRESHOLDS'][level - 1])) * 100 : 0
+        ((trackProgress.totalXP - LEVEL_THRESHOLDS[level - 1]) / 
+         (LEVEL_THRESHOLDS[level] - LEVEL_THRESHOLDS[level - 1])) * 100 : 0
     };
   }, [userProgress]);
 

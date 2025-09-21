@@ -2,7 +2,22 @@ import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { LearningTrack } from '../../types';
 import { getTrackColors } from '../../utils/trackColors';
-import { FeedbackData } from '../../services/questionValidationService';
+// import { FeedbackData } from '../../services/questionValidationService';
+
+interface FeedbackData {
+  isCorrect: boolean;
+  score: number;
+  totalScore: number;
+  timeBonus: number;
+  accuracyBonus: number;
+  streakBonus: number;
+  message: string;
+  feedback: string;
+  explanation?: string;
+  suggestions?: string[];
+  hints: string[];
+  nextSteps: string[];
+}
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(20px); }

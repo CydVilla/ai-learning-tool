@@ -417,7 +417,7 @@ const CodeExercise: React.FC<CodeExerciseProps> = ({
     setIsRunning(true);
     
     // Simulate test execution (in a real app, this would call a code execution service)
-    const results = exercise.testCases.map((testCase, index) => {
+    const results = (exercise.testCases || []).map((testCase, index) => {
       // Mock test execution - in reality, this would execute the code
       const passed = Math.random() > 0.3; // 70% pass rate for demo
       return {
@@ -436,7 +436,7 @@ const CodeExercise: React.FC<CodeExerciseProps> = ({
     
     const timeSpent = Math.round((Date.now() - startTime) / 1000);
     const passedTests = testResults.filter(result => result.passed).length;
-    const totalTests = exercise.testCases.length;
+    const totalTests = exercise.testCases?.length || 0;
     
     setIsCompleted(true);
     onComplete(code, passedTests, totalTests, timeSpent);
@@ -494,10 +494,10 @@ const CodeExercise: React.FC<CodeExerciseProps> = ({
               {exercise.difficulty.charAt(0).toUpperCase() + exercise.difficulty.slice(1)}
             </MetaBadge>
             <MetaBadge color={colors.secondary}>
-              {exercise.xp} XP
+              {exercise.points} XP
             </MetaBadge>
             <MetaBadge color={colors.accent}>
-              {exercise.testCases.length} Tests
+              {exercise.testCases?.length || 0} Tests
             </MetaBadge>
           </ExerciseMeta>
         </ExerciseInfo>
@@ -505,7 +505,7 @@ const CodeExercise: React.FC<CodeExerciseProps> = ({
 
       <ExerciseContent>
         <ExerciseDescription>
-          {exercise.description}
+          {exercise.content}
         </ExerciseDescription>
 
         <CodeEditorContainer>
@@ -542,7 +542,7 @@ const CodeExercise: React.FC<CodeExerciseProps> = ({
           <TestCasesTitle>
             🧪 Test Cases
           </TestCasesTitle>
-          {exercise.testCases.map((testCase, index) => {
+          {(exercise.testCases || []).map((testCase, index) => {
             const result = testResults[index];
             const passed = result?.passed || false;
             const failed = result && !result.passed;
@@ -579,8 +579,8 @@ const CodeExercise: React.FC<CodeExerciseProps> = ({
             </FeedbackTitle>
             <FeedbackText>
               {allTestsPassed 
-                ? `Great job! You passed all ${exercise.testCases.length} test cases.`
-                : `You passed ${testResults.filter(r => r.passed).length} out of ${exercise.testCases.length} test cases.`
+                ? `Great job! You passed all ${exercise.testCases?.length || 0} test cases.`
+                : `You passed ${testResults.filter(r => r.passed).length} out of ${exercise.testCases?.length || 0} test cases.`
               }
             </FeedbackText>
             {exercise.explanation && (

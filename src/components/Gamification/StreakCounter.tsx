@@ -260,20 +260,20 @@ const BackgroundPattern = styled.div`
 `;
 
 const StreakCounter: React.FC = () => {
-  const { getStreakInfo, getStreakMotivation, getNextStreakMilestone } = useStreakManagement();
+  const { getStreakStatistics, getStreakMotivation, getNextStreakMilestone } = useStreakManagement();
   const [isAnimating, setIsAnimating] = useState(false);
 
-  const streakInfo = getStreakInfo();
+  const streakInfo = getStreakStatistics();
   const motivation = getStreakMotivation();
   const nextMilestone = getNextStreakMilestone();
 
   // Trigger animation when streak changes
   useEffect(() => {
-    if (streakInfo.currentStreak > 0) {
+    if (streakInfo?.currentStreak && streakInfo.currentStreak > 0) {
       setIsAnimating(true);
       setTimeout(() => setIsAnimating(false), 1000);
     }
-  }, [streakInfo.currentStreak]);
+  }, [streakInfo?.currentStreak]);
 
   const getStreakLevel = (streak: number): number => {
     if (streak >= 50) return 50;
@@ -307,16 +307,16 @@ const StreakCounter: React.FC = () => {
     return 'Complete a question to start your streak!';
   };
 
-  const streakLevel = getStreakLevel(streakInfo.currentStreak);
+  const streakLevel = getStreakLevel(streakInfo?.currentStreak || 0);
   const progressPercentage = nextMilestone ? 
-    (streakInfo.currentStreak / nextMilestone.threshold) * 100 : 100;
+    ((streakInfo?.currentStreak || 0) / nextMilestone.days) * 100 : 100;
 
   const milestones = [
-    { threshold: 3, title: 'Getting Started', icon: '🌱' },
-    { threshold: 7, title: 'Weekly Warrior', icon: '⚡' },
-    { threshold: 14, title: 'Two Week Champion', icon: '🌟' },
-    { threshold: 30, title: 'Monthly Master', icon: '🔥' },
-    { threshold: 100, title: 'Century Streak', icon: '👑' }
+    { days: 3, title: 'Getting Started', icon: '🌱' },
+    { days: 7, title: 'Weekly Warrior', icon: '⚡' },
+    { days: 14, title: 'Two Week Champion', icon: '🌟' },
+    { days: 30, title: 'Monthly Master', icon: '🔥' },
+    { days: 100, title: 'Century Streak', icon: '👑' }
   ];
 
   return (
@@ -325,16 +325,16 @@ const StreakCounter: React.FC = () => {
       
       <StreakHeader>
         <StreakIcon streakLevel={streakLevel}>
-          {getStreakIcon(streakInfo.currentStreak)}
+          {getStreakIcon(streakInfo?.currentStreak || 0)}
         </StreakIcon>
         <StreakInfo>
-          <StreakTitle>{getStreakTitle(streakInfo.currentStreak)}</StreakTitle>
-          <StreakSubtitle>{getStreakSubtitle(streakInfo.currentStreak)}</StreakSubtitle>
+          <StreakTitle>{getStreakTitle(streakInfo?.currentStreak || 0)}</StreakTitle>
+          <StreakSubtitle>{getStreakSubtitle(streakInfo?.currentStreak || 0)}</StreakSubtitle>
         </StreakInfo>
       </StreakHeader>
 
       <StreakNumber streakLevel={streakLevel}>
-        {streakInfo.currentStreak}
+        {streakInfo?.currentStreak || 0}
       </StreakNumber>
       <StreakLabel>Day Streak</StreakLabel>
 
@@ -342,7 +342,7 @@ const StreakCounter: React.FC = () => {
         <ProgressSection>
           <ProgressHeader>
             <ProgressLabel>Next Milestone</ProgressLabel>
-            <ProgressValue>{nextMilestone.threshold} days</ProgressValue>
+            <ProgressValue>{nextMilestone.days} days</ProgressValue>
           </ProgressHeader>
           <ProgressBar>
             <ProgressFill 
@@ -359,10 +359,10 @@ const StreakCounter: React.FC = () => {
         </MilestoneTitle>
         <MilestoneList>
           {milestones.map((milestone) => {
-            const achieved = streakInfo.currentStreak >= milestone.threshold;
+            const achieved = (streakInfo?.currentStreak || 0) >= milestone.days;
             return (
               <MilestoneItem
-                key={milestone.threshold}
+                key={milestone.days}
                 achieved={achieved}
                 streakLevel={streakLevel}
               >
@@ -373,7 +373,7 @@ const StreakCounter: React.FC = () => {
                   {achieved ? '✓' : milestone.icon}
                 </MilestoneIcon>
                 <MilestoneText>
-                  {milestone.title} ({milestone.threshold} days)
+                  {milestone.title} ({milestone.days} days)
                 </MilestoneText>
               </MilestoneItem>
             );

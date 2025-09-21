@@ -192,14 +192,13 @@ class QuestionAnalyticsService {
     const typeBreakdown = {
       'multiple-choice': { total: 0, completed: 0, accuracy: 0 },
       'fill-in-the-blank': { total: 0, completed: 0, accuracy: 0 },
-      'true-false': { total: 0, completed: 0, accuracy: 0 },
       'code-exercise': { total: 0, completed: 0, accuracy: 0 }
     };
 
     // Count total questions by difficulty and type
     trackQuestions.forEach(question => {
-      difficultyBreakdown[question.difficulty].total++;
-      typeBreakdown[question.type].total++;
+      difficultyBreakdown[question.difficulty as DifficultyLevel].total++;
+      typeBreakdown[question.type as QuestionType].total++;
     });
 
     // Calculate analytics from events
@@ -214,8 +213,8 @@ class QuestionAnalyticsService {
         
         if (event.data.isCorrect) {
           completedQuestions++;
-          difficultyBreakdown[event.data.difficulty].completed++;
-          typeBreakdown[event.data.type].completed++;
+          difficultyBreakdown[event.data.difficulty as DifficultyLevel].completed++;
+          typeBreakdown[event.data.type as QuestionType].completed++;
         }
       }
     });
@@ -242,7 +241,7 @@ class QuestionAnalyticsService {
 
     // Calculate progress
     const xpEarned = this.calculateXPEarned(track);
-    const xpTotal = trackQuestions.reduce((sum, q) => sum + q.xp, 0);
+    const xpTotal = trackQuestions.reduce((sum, q) => sum + (q.xp || q.points || 0), 0);
     const currentLevel = this.calculateLevel(xpEarned);
     const nextLevelXP = this.calculateNextLevelXP(currentLevel);
 
@@ -291,7 +290,6 @@ class QuestionAnalyticsService {
     const performanceByType = {
       'multiple-choice': { questionsAnswered: 0, accuracy: 0, averageTime: 0 },
       'fill-in-the-blank': { questionsAnswered: 0, accuracy: 0, averageTime: 0 },
-      'true-false': { questionsAnswered: 0, accuracy: 0, averageTime: 0 },
       'code-exercise': { questionsAnswered: 0, accuracy: 0, averageTime: 0 }
     };
 
@@ -310,7 +308,7 @@ class QuestionAnalyticsService {
         totalHintsUsed += event.data.hintsUsed || 0;
 
         // Update performance by difficulty
-        const diff = performanceByDifficulty[event.data.difficulty];
+        const diff = performanceByDifficulty[event.data.difficulty as DifficultyLevel];
         diff.questionsAnswered++;
         if (event.data.isCorrect) {
           diff.accuracy = (diff.accuracy * (diff.questionsAnswered - 1) + 100) / diff.questionsAnswered;
@@ -320,7 +318,7 @@ class QuestionAnalyticsService {
         diff.averageTime = (diff.averageTime * (diff.questionsAnswered - 1) + event.data.timeSpent) / diff.questionsAnswered;
 
         // Update performance by type
-        const typ = performanceByType[event.data.type];
+        const typ = performanceByType[event.data.type as QuestionType];
         typ.questionsAnswered++;
         if (event.data.isCorrect) {
           typ.accuracy = (typ.accuracy * (typ.questionsAnswered - 1) + 100) / typ.questionsAnswered;
