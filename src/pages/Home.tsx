@@ -1,6 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import TrackProgressCard from '../components/Progress/TrackProgressCard';
+import StreakDisplay from '../components/Gamification/StreakDisplay';
+import { useUserProgress } from '../context/UserProgressContext';
 
 const HomeContainer = styled.div`
   text-align: center;
@@ -68,11 +71,70 @@ const TrackDescription = styled.p`
   line-height: 1.6;
 `;
 
+const ProgressSection = styled.div`
+  margin: 3rem 0;
+`;
+
+const SectionTitle = styled.h2`
+  color: white;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+`;
+
+const ProgressGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+`;
+
+const StreakSection = styled.div`
+  margin: 3rem 0;
+  display: flex;
+  justify-content: center;
+`;
+
+const StreakWrapper = styled.div`
+  max-width: 400px;
+  width: 100%;
+`;
+
 const Home: React.FC = () => {
+  const { userProgress, isLoading } = useUserProgress();
+
+  if (isLoading) {
+    return (
+      <HomeContainer>
+        <Title>Welcome to AI Learning Tool</Title>
+        <Subtitle>Loading your progress...</Subtitle>
+      </HomeContainer>
+    );
+  }
+
   return (
     <HomeContainer>
       <Title>Welcome to AI Learning Tool</Title>
       <Subtitle>Master web development with AI-powered feedback</Subtitle>
+      
+      {userProgress && (
+        <>
+          <StreakSection>
+            <StreakWrapper>
+              <StreakDisplay />
+            </StreakWrapper>
+          </StreakSection>
+          
+          <ProgressSection>
+            <SectionTitle>Your Progress</SectionTitle>
+            <ProgressGrid>
+              <TrackProgressCard track="html" />
+              <TrackProgressCard track="css" />
+              <TrackProgressCard track="javascript" />
+            </ProgressGrid>
+          </ProgressSection>
+        </>
+      )}
       
       <TrackGrid>
         <TrackCard to="/html">
