@@ -73,14 +73,14 @@
   - [x] 4.5 Implement track switching functionality
   - [x] 4.6 Add track difficulty progression system
 
-- [ ] 5.0 Question and Exercise Components
-  - [ ] 5.1 Create Question component for multiple choice questions
-  - [ ] 5.2 Create CodeExercise component for code writing
-  - [ ] 5.3 Implement question validation and feedback
-  - [ ] 5.4 Add code syntax highlighting
-  - [ ] 5.5 Create exercise result display with explanations
-  - [ ] 5.6 Implement question navigation (next/previous)
-  - [ ] 5.7 Add timer functionality for exercises
+- [x] 5.0 Question and Exercise Components
+  - [x] 5.1 Create Question component for multiple choice questions
+  - [x] 5.2 Create CodeExercise component for code writing
+  - [x] 5.3 Implement question validation and feedback
+  - [x] 5.4 Add code syntax highlighting
+  - [x] 5.5 Create exercise result display with explanations
+  - [x] 5.6 Implement question navigation (next/previous)
+  - [x] 5.7 Add timer functionality for exercises
 
 - [ ] 6.0 Gamification Features
   - [ ] 6.1 Create StreakCounter component with visual indicators
