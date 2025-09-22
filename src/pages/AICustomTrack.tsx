@@ -169,6 +169,7 @@ const Select = styled.select`
   font-size: 1rem;
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
+  width: 100%;
 
   &:focus {
     outline: none;
@@ -181,6 +182,17 @@ const Select = styled.select`
     color: white;
     padding: 0.5rem;
   }
+  
+  @media (max-width: 768px) {
+    padding: 0.875rem;
+    font-size: 0.95rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    border-radius: 10px;
+  }
 `;
 
 const TopicInput = styled.input`
@@ -192,6 +204,7 @@ const TopicInput = styled.input`
   font-size: 1rem;
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
+  width: 100%;
 
   &:focus {
     outline: none;
@@ -201,6 +214,17 @@ const TopicInput = styled.input`
 
   &::placeholder {
     color: rgba(255, 255, 255, 0.7);
+  }
+  
+  @media (max-width: 768px) {
+    padding: 0.875rem;
+    font-size: 0.95rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    border-radius: 10px;
   }
 `;
 
@@ -224,6 +248,12 @@ const SuggestionChip = styled.button`
   &:hover {
     background: rgba(255, 255, 255, 0.2);
     transform: translateY(-1px);
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    border-radius: 15px;
   }
 `;
 
@@ -254,6 +284,53 @@ const GenerateButton = styled.button`
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 1.25rem 2rem;
+    font-size: 1.1rem;
+    min-width: 200px;
+    margin: 1.5rem auto;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    min-width: 180px;
+    border-radius: 20px;
+    margin: 1rem auto;
+  }
+`;
+
+const HomeButton = styled.button`
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 0.75rem 1.5rem;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem auto 0;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.9rem;
+    border-radius: 15px;
   }
 `;
 
@@ -933,6 +1010,10 @@ const AICustomTrack: React.FC<AICustomTrackProps> = () => {
           <GenerateButton onClick={generateCustomQuiz}>
             🚀 Generate AI Quiz
           </GenerateButton>
+          
+          <HomeButton onClick={() => navigate('/')}>
+            🏠 Go Home
+          </HomeButton>
         </SetupContainer>
       </TrackContainer>
     );
