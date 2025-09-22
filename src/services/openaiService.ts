@@ -3,7 +3,7 @@ import { Question, CodeExercise, LearningTrack, DifficultyLevel, QuestionType } 
 
 // For demo deployment, we'll use mock responses instead of real OpenAI API
 // Users can add their own API key in a local .env file for full functionality
-const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
+// Note: OpenAI integration is disabled in this public demo version
 const openai = null; // Disabled for public demo to prevent API key exposure
 
 interface OpenAIResponse {
@@ -55,11 +55,9 @@ class OpenAIService {
   private apiKey: string;
 
   constructor() {
-    this.apiKey = OPENAI_API_KEY || '';
-    
-    if (!this.apiKey) {
-      console.warn('OpenAI API key not found. Please set REACT_APP_OPENAI_API_KEY in your .env file.');
-    }
+    // For demo deployment, always use fallback responses
+    this.apiKey = '';
+    console.log('OpenAI service initialized in demo mode - using mock responses');
   }
 
   private async makeRequest(messages: any[], temperature: number = 0.7): Promise<OpenAIResponse> {
