@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Question, CodeExercise, LearningTrack, DifficultyLevel } from '../../types';
-import { allQuestions, allCodeExercises, getQuestionsByTrackAndDifficulty, getCodeExercisesByTrackAndDifficulty } from '../../data/questions';
+import { getQuestionsByTrackAndDifficulty, getCodeExercisesByTrackAndDifficulty } from '../../data/questions';
 import { getTrackColors } from '../../utils/trackColors';
 import MultipleChoiceQuestion from '../Questions/MultipleChoiceQuestion';
 import CodeExerciseComponent from '../Questions/CodeExercise';

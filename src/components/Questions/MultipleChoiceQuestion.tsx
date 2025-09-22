@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes, css } from 'styled-components';
-import { Question, QuestionType, LearningTrack } from '../../types';
+import { Question, LearningTrack } from '../../types';
 import { getTrackColors } from '../../utils/trackColors';
 
 const fadeIn = keyframes`

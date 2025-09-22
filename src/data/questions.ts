@@ -1,4 +1,4 @@
-import { Question, CodeExercise, LearningTrack, DifficultyLevel, QuestionType } from '../types';
+import { Question, CodeExercise, LearningTrack, DifficultyLevel } from '../types';
 
 // HTML Questions
 export const htmlQuestions: Question[] = [
