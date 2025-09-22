@@ -128,27 +128,21 @@ Create ${count} multiple choice question${count > 1 ? 's' : ''} for ${difficulty
 Each question should:
 - Be clear and concise
 - Test practical knowledge
-- Have exactly 4 options (A, B, C, D)
+- Have exactly 4 options
 - Include a code example if relevant
 - Provide detailed explanations
 - Be appropriate for ${difficulty} level
 
-Return the response as a JSON array with this exact structure:
+IMPORTANT: Return ONLY a valid JSON array. Do not include any markdown, explanations, or other text. 
+
+Use this exact structure:
 [
   {
-    "id": "unique_id",
+    "id": "q1",
     "question": "Question text here",
     "options": ["Option A", "Option B", "Option C", "Option D"],
     "correctAnswer": "Option A",
-    "explanation": "Detailed explanation of why this is correct",
-    "codeExample": "Optional code example",
-    "difficulty": "${difficulty}",
-    "track": "${track}",
-    "xp": 10,
-    "feedback": {
-      "correct": "Great job!",
-      "incorrect": "Not quite right. Here's why..."
-    }
+    "explanation": "Detailed explanation of why this is correct"
   }
 ]`;
 
@@ -161,16 +155,43 @@ Return the response as a JSON array with this exact structure:
       const response = await this.makeRequest(messages, 0.8);
       const content = response.choices[0].message.content;
       
-      // Parse JSON response
-      const questions = JSON.parse(content);
+      console.log('🤖 Raw OpenAI response:', content);
+      
+      // Clean and parse JSON response
+      let questions;
+      try {
+        // Try to extract JSON from the response (sometimes wrapped in markdown)
+        const jsonMatch = content.match(/\[[\s\S]*\]/);
+        const jsonString = jsonMatch ? jsonMatch[0] : content;
+        
+        // Clean up common JSON issues
+        const cleanedJson = jsonString
+          .replace(/```json\n?/g, '')
+          .replace(/```\n?/g, '')
+          .replace(/,\s*}/g, '}')
+          .replace(/,\s*]/g, ']')
+          .trim();
+          
+        console.log('🧹 Cleaned JSON:', cleanedJson);
+        questions = JSON.parse(cleanedJson);
+      } catch (parseError) {
+        console.error('❌ JSON parsing failed:', parseError);
+        console.log('📝 Problematic content:', content);
+        throw new Error(`Failed to parse OpenAI response as JSON: ${parseError}`);
+      }
+      
+      // Validate that we have an array
+      if (!Array.isArray(questions)) {
+        throw new Error('OpenAI response is not an array of questions');
+      }
       
       // Validate and format questions
       return questions.map((q: any, index: number) => ({
         id: q.id || `mc_${track}_${difficulty}_${Date.now()}_${index}`,
-        question: q.question,
-        options: q.options,
-        correctAnswer: q.correctAnswer,
-        explanation: q.explanation,
+        question: q.question || q.content || `Generated question ${index + 1}`,
+        options: q.options || ['Option A', 'Option B', 'Option C', 'Option D'],
+        correctAnswer: q.correctAnswer || q.options?.[0] || 'Option A',
+        explanation: q.explanation || 'No explanation provided.',
         codeExample: q.codeExample || null,
         difficulty: q.difficulty || difficulty,
         track: q.track || track,
