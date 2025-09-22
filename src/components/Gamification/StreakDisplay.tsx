@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import { useUserProgress } from '../../context/UserProgressContext';
 import { StreakService } from '../../services/streakService';
 
@@ -36,16 +36,20 @@ const StreakHeader = styled.div`
 
 const StreakIcon = styled.div<{ isActive: boolean }>`
   font-size: 2rem;
-  animation: ${props => props.isActive ? `${pulse} 2s infinite` : 'none'};
-  filter: ${props => props.isActive ? 'drop-shadow(0 0 10px rgba(255, 107, 107, 0.8))' : 'none'};
+  ${props => props.isActive && css`
+    animation: ${pulse} 2s infinite;
+    filter: drop-shadow(0 0 10px rgba(255, 107, 107, 0.8));
+  `}
 `;
 
 const StreakNumber = styled.div<{ isActive: boolean }>`
   font-size: 3rem;
   font-weight: bold;
   color: ${props => props.isActive ? '#ff6b6b' : 'rgba(255, 255, 255, 0.7)'};
-  text-shadow: ${props => props.isActive ? '0 0 20px rgba(255, 107, 107, 0.8)' : 'none'};
-  animation: ${props => props.isActive ? `${glow} 2s infinite` : 'none'};
+  ${props => props.isActive && css`
+    text-shadow: 0 0 20px rgba(255, 107, 107, 0.8);
+    animation: ${glow} 2s infinite;
+  `}
 `;
 
 const StreakLabel = styled.div`
@@ -137,7 +141,9 @@ const MilestoneBadge = styled.div`
   justify-content: center;
   font-size: 0.8rem;
   font-weight: bold;
-  animation: ${pulse} 1s infinite;
+  ${css`
+    animation: ${pulse} 1s infinite;
+  `}
 `;
 
 const StreakDisplay: React.FC = () => {
