@@ -491,8 +491,16 @@ const AICustomTrack: React.FC<AICustomTrackProps> = () => {
     setError(null);
 
     try {
-      // Simulate AI generation with more sophisticated mock questions
-      const questions = await generateAdvancedMockQuestions(topic, selectedTrack, difficulty, questionCount);
+      let questions: Question[];
+      
+      // Try to use OpenAI API if configured, otherwise fallback to mock questions
+      if (openaiService.isConfigured()) {
+        console.log('🤖 Using OpenAI to generate questions...');
+        questions = await generateAIQuestions(topic, selectedTrack, difficulty, questionCount);
+      } else {
+        console.log('⚠️ Using mock questions (OpenAI not configured)...');
+        questions = await generateAdvancedMockQuestions(topic, selectedTrack, difficulty, questionCount);
+      }
       
       const quiz: CustomQuiz = {
         id: `custom_${Date.now()}`,
@@ -511,6 +519,7 @@ const AICustomTrack: React.FC<AICustomTrackProps> = () => {
       setCustomQuiz(quiz);
       setCurrentStep('quiz');
     } catch (err: any) {
+      console.error('❌ Quiz generation failed:', err);
       setError(err.message || 'Failed to generate custom quiz. Please try again.');
       setCurrentStep('setup');
     }
@@ -545,6 +554,47 @@ const AICustomTrack: React.FC<AICustomTrackProps> = () => {
     }
 
     return questions;
+  };
+
+  const generateAIQuestions = async (
+    topic: string, 
+    track: LearningTrack, 
+    difficulty: DifficultyLevel, 
+    count: number
+  ): Promise<Question[]> => {
+    console.log(`🤖 Generating ${count} ${difficulty} ${track.toUpperCase()} questions about "${topic}" using OpenAI...`);
+    
+    try {
+      // Use OpenAI to generate questions
+      const response = await openaiService.generateQuestions({
+        topic,
+        language: track,
+        difficulty,
+        count,
+        questionType: 'multiple-choice'
+      });
+
+      const questions: Question[] = response.questions.map((q, index) => ({
+        id: `ai_custom_${track}_${Date.now()}_${index}`,
+        track,
+        type: 'multiple-choice',
+        difficulty,
+        content: q.question,
+        options: q.options,
+        correctAnswer: q.correctAnswer,
+        explanation: q.explanation,
+        points: difficulty === 'beginner' ? 15 : difficulty === 'intermediate' ? 25 : 35,
+        tags: [topic, difficulty, 'ai-generated', 'custom']
+      }));
+
+      console.log(`✅ Successfully generated ${questions.length} AI questions`);
+      return questions;
+    } catch (error) {
+      console.error('❌ OpenAI question generation failed:', error);
+      // Fallback to mock questions if OpenAI fails
+      console.log('🔄 Falling back to mock questions...');
+      return generateAdvancedMockQuestions(topic, track, difficulty, count);
+    }
   };
 
   const generateHTMLQuestion = (id: string, topic: string, difficulty: DifficultyLevel, xp: number, index: number): Question => {
