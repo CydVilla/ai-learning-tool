@@ -57,12 +57,50 @@ const TrackTitle = styled.h1`
   background-clip: text;
 `;
 
+const ApiStatusBadge = styled.div<{ status: 'checking' | 'connected' | 'mock' }>`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  
+  ${props => props.status === 'connected' && `
+    background: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+    border: 1px solid rgba(46, 204, 113, 0.3);
+  `}
+  
+  ${props => props.status === 'mock' && `
+    background: rgba(241, 196, 15, 0.2);
+    color: #f1c40f;
+    border: 1px solid rgba(241, 196, 15, 0.3);
+  `}
+  
+  ${props => props.status === 'checking' && `
+    background: rgba(52, 152, 219, 0.2);
+    color: #3498db;
+    border: 1px solid rgba(52, 152, 219, 0.3);
+  `}
+`;
+
 const TrackDescription = styled.p`
   font-size: 1.3rem;
   opacity: 0.9;
   max-width: 700px;
   margin: 0 auto;
   line-height: 1.6;
+  
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+    max-width: 90%;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1rem;
+  }
 `;
 
 const SetupContainer = styled.div`
@@ -74,6 +112,17 @@ const SetupContainer = styled.div`
   max-width: 800px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   animation: ${fadeIn} 0.6s ease-out;
+  
+  @media (max-width: 768px) {
+    padding: 2rem;
+    margin: 1rem;
+    max-width: calc(100% - 2rem);
+  }
+  
+  @media (max-width: 480px) {
+    padding: 1.5rem;
+    border-radius: 15px;
+  }
 `;
 
 const SetupTitle = styled.h2`
@@ -397,11 +446,33 @@ const AICustomTrack: React.FC<AICustomTrackProps> = () => {
   const [questionCount, setQuestionCount] = useState(5);
   const [customQuiz, setCustomQuiz] = useState<CustomQuiz | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [apiStatus, setApiStatus] = useState<'checking' | 'connected' | 'mock'>('checking');
 
   const { updateProgress } = useUserProgress();
   const { getLevelInfo } = useXPSystem();
   const { updateStreakAfterActivity } = useStreakManagement();
   const { updateDailyProgress } = useDailyGoalManagement();
+
+  // Check OpenAI API status on component mount
+  useEffect(() => {
+    const checkApiStatus = async () => {
+      try {
+        const isConfigured = openaiService.isConfigured();
+        if (isConfigured) {
+          setApiStatus('connected');
+          console.log('✅ OpenAI API: Connected with API key');
+        } else {
+          setApiStatus('mock');
+          console.log('⚠️ OpenAI API: Using mock responses (no API key)');
+        }
+      } catch (error) {
+        setApiStatus('mock');
+        console.log('❌ OpenAI API: Error checking status, using mock responses');
+      }
+    };
+
+    checkApiStatus();
+  }, []);
 
   const topicSuggestions = {
     html: ['Semantic Elements', 'Forms & Validation', 'Accessibility', 'HTML5 APIs', 'Meta Tags', 'Tables', 'Media Elements'],
@@ -727,6 +798,11 @@ const AICustomTrack: React.FC<AICustomTrackProps> = () => {
         <TrackHeader>
           <TrackIcon>🤖</TrackIcon>
           <TrackTitle>AI Custom Track</TrackTitle>
+          <ApiStatusBadge status={apiStatus}>
+            {apiStatus === 'checking' && '🔄 Checking API...'}
+            {apiStatus === 'connected' && '✅ AI Powered'}
+            {apiStatus === 'mock' && '⚠️ Demo Mode'}
+          </ApiStatusBadge>
           <TrackDescription>
             Create personalized coding quizzes on any topic using AI. 
             Choose your subject, difficulty, and question count for a tailored learning experience!
