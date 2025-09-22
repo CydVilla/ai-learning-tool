@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes, css } from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import { Question, CodeExercise, LearningTrack, DifficultyLevel } from '../../types';
 import { getQuestionsByTrackAndDifficulty, getCodeExercisesByTrackAndDifficulty } from '../../data/questions';
 import { getTrackColors } from '../../utils/trackColors';
@@ -215,6 +216,7 @@ interface LessonContainerProps {
 }
 
 const LessonContainer: React.FC<LessonContainerProps> = ({ track, difficulty = 'beginner' }) => {
+  const navigate = useNavigate();
   const { userProgress, updateProgress } = useUserProgress();
   const { getLevelInfo } = useXPSystem();
   const { updateStreakAfterActivity } = useStreakManagement();
@@ -318,7 +320,7 @@ const LessonContainer: React.FC<LessonContainerProps> = ({ track, difficulty = '
   };
 
   const handleGoHome = () => {
-    window.location.href = '/';
+    navigate('/');
   };
 
   const getTrackIcon = (track: LearningTrack) => {

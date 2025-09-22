@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import { LearningTrack, DifficultyLevel, Question } from '../types';
 import LoadingStates from '../components/AI/LoadingStates';
 import MultipleChoiceQuestion from '../components/Questions/MultipleChoiceQuestion';
@@ -388,6 +389,7 @@ interface CustomQuiz {
 }
 
 const AICustomTrack: React.FC<AICustomTrackProps> = () => {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<'setup' | 'generating' | 'quiz' | 'completed'>('setup');
   const [topic, setTopic] = useState('');
   const [selectedTrack, setSelectedTrack] = useState<LearningTrack>('javascript');
@@ -916,7 +918,7 @@ const AICustomTrack: React.FC<AICustomTrackProps> = () => {
             <ActionButton onClick={resetQuiz}>
               🔄 Create New Quiz
             </ActionButton>
-            <ActionButton $variant="secondary" onClick={() => window.location.href = '/'}>
+            <ActionButton $variant="secondary" onClick={() => navigate('/')}>
               🏠 Go Home
             </ActionButton>
           </ActionButtons>
