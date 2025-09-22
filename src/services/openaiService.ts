@@ -1,10 +1,7 @@
 import OpenAI from 'openai';
 import { Question, CodeExercise, LearningTrack, DifficultyLevel, QuestionType } from '../types';
 
-// For demo deployment, we'll use mock responses instead of real OpenAI API
-// Users can add their own API key in a local .env file for full functionality
-// Note: OpenAI integration is disabled in this public demo version
-const openai = null; // Disabled for public demo to prevent API key exposure
+// OpenAI client will be initialized per request to avoid exposing API key at module level
 
 interface OpenAIResponse {
   id: string;
@@ -55,22 +52,34 @@ class OpenAIService {
   private apiKey: string;
 
   constructor() {
-    // For demo deployment, always use fallback responses
-    this.apiKey = '';
-    console.log('OpenAI service initialized in demo mode - using mock responses');
+    // Check for API key in environment variables
+    this.apiKey = process.env.REACT_APP_OPENAI_API_KEY || '';
+    
+    if (this.apiKey) {
+      console.log('OpenAI service initialized with API key');
+    } else {
+      console.log('OpenAI service initialized in demo mode - using mock responses');
+    }
   }
 
   private async makeRequest(messages: any[], temperature: number = 0.7): Promise<OpenAIResponse> {
-    // For demo deployment, always use fallback responses
-    throw new Error('OpenAI API not available in demo mode - using fallback responses');
-    
-    /* Commented out for demo deployment
-    if (!this.apiKey || !openai) {
+    // Check if API key is available
+    if (!this.apiKey) {
       throw new Error('OpenAI API key not configured - using fallback responses');
     }
 
+    // Initialize OpenAI client if we have an API key
+    const openaiClient = new OpenAI({
+      apiKey: this.apiKey,
+      dangerouslyAllowBrowser: true // Note: This exposes the API key to users
+    });
+
+    if (!openaiClient) {
+      throw new Error('OpenAI client not initialized - using fallback responses');
+    }
+
     try {
-      const completion = await openai!.chat.completions.create({
+      const completion = await openaiClient.chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: messages as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
         temperature,
@@ -104,7 +113,6 @@ class OpenAIService {
       console.error('OpenAI API Error:', error);
       throw new Error(`OpenAI API Error: ${error.message || 'Unknown error'}`);
     }
-    */
   }
 
   /**
