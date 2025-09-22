@@ -8,6 +8,7 @@ import { useUserProgress } from '../context/UserProgressContext';
 import { useXPSystem } from '../hooks/useXPSystem';
 import { useStreakManagement } from '../hooks/useStreakManagement';
 import { useDailyGoalManagement } from '../hooks/useDailyGoalManagement';
+import { openaiService } from '../services/openaiService';
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(20px); }
@@ -57,7 +58,7 @@ const TrackTitle = styled.h1`
   background-clip: text;
 `;
 
-const ApiStatusBadge = styled.div<{ status: 'checking' | 'connected' | 'mock' }>`
+const ApiStatusBadge = styled.div<{ $status: 'checking' | 'connected' | 'mock' }>`
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -67,19 +68,19 @@ const ApiStatusBadge = styled.div<{ status: 'checking' | 'connected' | 'mock' }>
   font-weight: 600;
   margin-bottom: 1rem;
   
-  ${props => props.status === 'connected' && `
+  ${props => props.$status === 'connected' && `
     background: rgba(46, 204, 113, 0.2);
     color: #2ecc71;
     border: 1px solid rgba(46, 204, 113, 0.3);
   `}
   
-  ${props => props.status === 'mock' && `
+  ${props => props.$status === 'mock' && `
     background: rgba(241, 196, 15, 0.2);
     color: #f1c40f;
     border: 1px solid rgba(241, 196, 15, 0.3);
   `}
   
-  ${props => props.status === 'checking' && `
+  ${props => props.$status === 'checking' && `
     background: rgba(52, 152, 219, 0.2);
     color: #3498db;
     border: 1px solid rgba(52, 152, 219, 0.3);
@@ -798,7 +799,7 @@ const AICustomTrack: React.FC<AICustomTrackProps> = () => {
         <TrackHeader>
           <TrackIcon>🤖</TrackIcon>
           <TrackTitle>AI Custom Track</TrackTitle>
-          <ApiStatusBadge status={apiStatus}>
+          <ApiStatusBadge $status={apiStatus}>
             {apiStatus === 'checking' && '🔄 Checking API...'}
             {apiStatus === 'connected' && '✅ AI Powered'}
             {apiStatus === 'mock' && '⚠️ Demo Mode'}

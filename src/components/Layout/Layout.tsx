@@ -112,11 +112,11 @@ const MobileMenuButton = styled.button`
   }
 `;
 
-const Overlay = styled.div<{ isOpen: boolean }>`
+const Overlay = styled.div<{ $isOpen: boolean }>`
   display: none;
   
   @media (max-width: 768px) {
-    display: ${props => props.isOpen ? 'block' : 'none'};
+    display: ${props => props.$isOpen ? 'block' : 'none'};
     position: fixed;
     top: 0;
     left: 0;
@@ -182,7 +182,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </Nav>
       </Header>
       
-      <Overlay isOpen={isMobileMenuOpen} onClick={closeMobileMenu} />
+      <Overlay $isOpen={isMobileMenuOpen} onClick={closeMobileMenu} />
       
       <Main>
         {children || <Outlet />}
