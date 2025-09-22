@@ -17,7 +17,7 @@ function App() {
     <ErrorBoundary>
       <AccessibilityProvider>
         <UserProgressProvider>
-          <Router>
+          <Router basename="/ai-learning-tool">
             <Layout>
               <Suspense fallback={<PageLoader />}>
                         <Routes>
