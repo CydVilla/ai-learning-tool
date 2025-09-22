@@ -566,20 +566,21 @@ const AICustomTrack: React.FC<AICustomTrackProps> = () => {
     
     try {
       // Use OpenAI to generate questions
-      const response = await openaiService.generateQuestions({
+      const aiQuestions = await openaiService.generateMultipleChoiceQuestions({
         topic,
-        language: track,
+        track,
         difficulty,
         count,
         questionType: 'multiple-choice'
       });
 
-      const questions: Question[] = response.questions.map((q, index) => ({
+      // Convert AI questions to our Question format
+      const questions: Question[] = aiQuestions.map((q: any, index: number) => ({
         id: `ai_custom_${track}_${Date.now()}_${index}`,
         track,
         type: 'multiple-choice',
         difficulty,
-        content: q.question,
+        content: q.question || q.content,
         options: q.options,
         correctAnswer: q.correctAnswer,
         explanation: q.explanation,
