@@ -31,6 +31,37 @@ const TrackHeader = styled.div`
   text-align: center;
   margin-bottom: 3rem;
   animation: ${fadeIn} 0.8s ease-out;
+  position: relative;
+`;
+
+const BackButton = styled.button`
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateX(-2px);
+  }
+
+  @media (max-width: 768px) {
+    position: static;
+    margin: 0 auto 2rem;
+    width: fit-content;
+  }
 `;
 
 const TrackIcon = styled.div`
@@ -170,6 +201,8 @@ const Select = styled.select`
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
   width: 100%;
+  appearance: none;
+  cursor: pointer;
 
   &:focus {
     outline: none;
@@ -180,18 +213,19 @@ const Select = styled.select`
   option {
     background: #2a2a2a;
     color: white;
-    padding: 0.5rem;
+    padding: 0.75rem;
   }
   
   @media (max-width: 768px) {
-    padding: 0.875rem;
-    font-size: 0.95rem;
+    padding: 1.125rem;
+    font-size: 1rem;
   }
   
   @media (max-width: 480px) {
-    padding: 0.75rem;
-    font-size: 0.9rem;
-    border-radius: 10px;
+    padding: 1rem;
+    font-size: 1rem;
+    border-radius: 12px;
+    min-height: 50px;
   }
 `;
 
@@ -217,14 +251,15 @@ const TopicInput = styled.input`
   }
   
   @media (max-width: 768px) {
-    padding: 0.875rem;
-    font-size: 0.95rem;
+    padding: 1.125rem;
+    font-size: 1rem;
   }
   
   @media (max-width: 480px) {
-    padding: 0.75rem;
-    font-size: 0.9rem;
-    border-radius: 10px;
+    padding: 1rem;
+    font-size: 1rem;
+    border-radius: 12px;
+    min-height: 50px;
   }
 `;
 
@@ -925,6 +960,9 @@ const AICustomTrack: React.FC<AICustomTrackProps> = () => {
     return (
       <TrackContainer>
         <TrackHeader>
+          <BackButton onClick={() => navigate('/')}>
+            ← Home
+          </BackButton>
           <TrackIcon>🤖</TrackIcon>
           <TrackTitle>AI Custom Track</TrackTitle>
           <ApiStatusBadge $status={apiStatus}>
@@ -1023,6 +1061,9 @@ const AICustomTrack: React.FC<AICustomTrackProps> = () => {
     return (
       <TrackContainer>
         <TrackHeader>
+          <BackButton onClick={() => navigate('/')}>
+            ← Home
+          </BackButton>
           <TrackIcon>🤖</TrackIcon>
           <TrackTitle>AI Custom Track</TrackTitle>
           <TrackDescription>
