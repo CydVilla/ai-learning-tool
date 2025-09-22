@@ -55,18 +55,10 @@ class OpenAIService {
     // Check for API key in environment variables
     this.apiKey = process.env.REACT_APP_OPENAI_API_KEY || '';
     
-    // Debug information for deployment troubleshooting
-    console.log('🔧 OpenAI Service Debug Info:');
-    console.log('  - API Key exists:', !!this.apiKey);
-    console.log('  - API Key length:', this.apiKey?.length || 0);
-    console.log('  - API Key prefix:', this.apiKey ? this.apiKey.substring(0, 7) + '...' : 'none');
-    console.log('  - Environment:', process.env.NODE_ENV);
-    console.log('  - All REACT_APP env vars:', Object.keys(process.env).filter(key => key.startsWith('REACT_APP')));
-    
     if (this.apiKey) {
-      console.log('✅ OpenAI service initialized with API key');
+      console.log('OpenAI service initialized with API key');
     } else {
-      console.log('⚠️ OpenAI service initialized in demo mode - using mock responses');
+      console.log('OpenAI service initialized in demo mode - using mock responses');
     }
   }
 
@@ -163,8 +155,6 @@ Use this exact structure:
       const response = await this.makeRequest(messages, 0.8);
       const content = response.choices[0].message.content;
       
-      console.log('🤖 Raw OpenAI response:', content);
-      
       // Clean and parse JSON response
       let questions;
       try {
@@ -180,11 +170,9 @@ Use this exact structure:
           .replace(/,\s*]/g, ']')
           .trim();
           
-        console.log('🧹 Cleaned JSON:', cleanedJson);
         questions = JSON.parse(cleanedJson);
       } catch (parseError) {
-        console.error('❌ JSON parsing failed:', parseError);
-        console.log('📝 Problematic content:', content);
+        console.error('Error parsing OpenAI JSON response:', parseError);
         throw new Error(`Failed to parse OpenAI response as JSON: ${parseError}`);
       }
       
