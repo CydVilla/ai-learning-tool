@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 
 const fadeIn = keyframes`
   from { opacity: 0; }
@@ -24,11 +24,15 @@ const PageLoaderContainer = styled.div`
   justify-content: center;
   min-height: 60vh;
   padding: 2rem;
-  animation: ${fadeIn} 0.5s ease-in-out;
+  ${css`
+    animation: ${fadeIn} 0.5s ease-in-out;
+  `}
 `;
 
 const LogoContainer = styled.div`
-  animation: ${slideUp} 0.8s ease-out;
+  ${css`
+    animation: ${slideUp} 0.8s ease-out;
+  `}
   margin-bottom: 2rem;
 `;
 
@@ -65,7 +69,9 @@ const Dot = styled.div<{ delay: number }>`
   height: 8px;
   background: white;
   border-radius: 50%;
-  animation: ${fadeIn} 1.5s ease-in-out infinite;
+  ${css`
+    animation: ${fadeIn} 1.5s ease-in-out infinite;
+  `}
   animation-delay: ${props => props.delay}s;
 `;
 

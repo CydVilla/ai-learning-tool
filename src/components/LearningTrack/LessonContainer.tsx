@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import { Question, CodeExercise, LearningTrack, DifficultyLevel } from '../../types';
 import { getQuestionsByTrackAndDifficulty, getCodeExercisesByTrackAndDifficulty } from '../../data/questions';
 import { getTrackColors } from '../../utils/trackColors';
@@ -26,7 +26,9 @@ const Container = styled.div<{ $color: string; $darkColor: string }>`
   min-height: 100vh;
   background: linear-gradient(135deg, ${props => props.$color} 0%, ${props => props.$darkColor} 100%);
   padding: 2rem;
-  animation: ${fadeIn} 0.6s ease-out;
+  ${css`
+    animation: ${fadeIn} 0.6s ease-out;
+  `}
 `;
 
 const Header = styled.div`
@@ -129,7 +131,9 @@ const LessonContent = styled.div`
   border-radius: 16px;
   padding: 2rem;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  animation: ${slideIn} 0.4s ease-out;
+  ${css`
+    animation: ${slideIn} 0.4s ease-out;
+  `}
 `;
 
 const LessonHeader = styled.div`

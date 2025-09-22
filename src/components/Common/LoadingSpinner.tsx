@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 
 const spin = keyframes`
   0% { transform: rotate(0deg); }
@@ -19,7 +19,9 @@ const Spinner = styled.div`
   border: 4px solid rgba(255, 255, 255, 0.3);
   border-top: 4px solid #667eea;
   border-radius: 50%;
-  animation: ${spin} 1s linear infinite;
+  ${css`
+    animation: ${spin} 1s linear infinite;
+  `}
 `;
 
 const LoadingText = styled.p`
