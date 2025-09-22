@@ -30,12 +30,28 @@ const Container = styled.div<{ $color: string; $darkColor: string }>`
   ${css`
     animation: ${fadeIn} 0.6s ease-out;
   `}
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.5rem;
+  }
 `;
 
 const Header = styled.div`
   text-align: center;
   margin-bottom: 3rem;
   color: white;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 2rem;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 1.5rem;
+  }
 `;
 
 const TrackIcon = styled.div`
@@ -135,6 +151,16 @@ const LessonContent = styled.div`
   ${css`
     animation: ${slideIn} 0.4s ease-out;
   `}
+  
+  @media (max-width: 768px) {
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 1rem;
+    border-radius: 8px;
+  }
 `;
 
 const LessonHeader = styled.div`
@@ -142,18 +168,40 @@ const LessonHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+    margin-bottom: 1.5rem;
+  }
 `;
 
 const LessonTitle = styled.h2`
   color: white;
   margin: 0;
   font-size: 1.8rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.3rem;
+  }
 `;
 
 const LessonMeta = styled.div`
   display: flex;
   gap: 1rem;
   align-items: center;
+  
+  @media (max-width: 768px) {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
 `;
 
 const MetaBadge = styled.div`
@@ -207,6 +255,20 @@ const ActionButton = styled.button`
 
   &:active {
     transform: translateY(0);
+  }
+  
+  @media (max-width: 768px) {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+    margin: 0.25rem;
+    width: 100%;
+    max-width: 200px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.7rem 1rem;
+    font-size: 0.8rem;
+    border-radius: 20px;
   }
 `;
 
