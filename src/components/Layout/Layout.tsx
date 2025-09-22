@@ -48,7 +48,7 @@ const LogoIcon = styled.div`
   font-weight: bold;
 `;
 
-const NavLinks = styled.div<{ isOpen: boolean }>`
+const NavLinks = styled.div<{ $isOpen: boolean }>`
   display: flex;
   gap: 2rem;
   align-items: center;
@@ -63,7 +63,7 @@ const NavLinks = styled.div<{ isOpen: boolean }>`
     flex-direction: column;
     padding: 2rem;
     gap: 1rem;
-    transform: ${props => props.isOpen ? 'translateY(0)' : 'translateY(-100%)'};
+    transform: ${props => props.$isOpen ? 'translateY(0)' : 'translateY(-100%)'};
     transition: transform 0.3s ease;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     z-index: 99;
@@ -169,7 +169,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <LogoIcon>AI</LogoIcon>
             Learning Tool
           </Logo>
-          <NavLinks isOpen={isMobileMenuOpen}>
+          <NavLinks $isOpen={isMobileMenuOpen}>
             <NavLink to="/" onClick={closeMobileMenu}>Home</NavLink>
             <NavLink to="/html" onClick={closeMobileMenu}>HTML</NavLink>
             <NavLink to="/css" onClick={closeMobileMenu}>CSS</NavLink>
