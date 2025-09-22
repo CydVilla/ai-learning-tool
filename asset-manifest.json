@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/ai-learning-tool/static/css/main.e6c13ad2.css",
+    "main.js": "/ai-learning-tool/static/js/main.221a181f.js",
+    "static/js/453.fd1ca760.chunk.js": "/ai-learning-tool/static/js/453.fd1ca760.chunk.js",
+    "index.html": "/ai-learning-tool/index.html",
+    "main.e6c13ad2.css.map": "/ai-learning-tool/static/css/main.e6c13ad2.css.map",
+    "main.221a181f.js.map": "/ai-learning-tool/static/js/main.221a181f.js.map",
+    "453.fd1ca760.chunk.js.map": "/ai-learning-tool/static/js/453.fd1ca760.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.221a181f.js"
+  ]
+}
