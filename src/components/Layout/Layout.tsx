@@ -54,6 +54,7 @@ const NavLinks = styled.div<{ $isOpen: boolean }>`
   align-items: center;
   
   @media (max-width: 768px) {
+    display: ${props => props.$isOpen ? 'flex' : 'none'};
     position: fixed;
     top: 100%;
     left: 0;
@@ -63,8 +64,7 @@ const NavLinks = styled.div<{ $isOpen: boolean }>`
     flex-direction: column;
     padding: 2rem;
     gap: 1rem;
-    transform: ${props => props.$isOpen ? 'translateY(0)' : 'translateY(-100%)'};
-    transition: transform 0.3s ease;
+    transform: translateY(0);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     z-index: 99;
   }
@@ -88,6 +88,35 @@ const NavLink = styled(Link)`
     text-align: center;
     padding: 1rem;
     font-size: 1.1rem;
+  }
+`;
+
+const MobileControls = styled.div`
+  display: none;
+  align-items: center;
+  gap: 1rem;
+  
+  @media (max-width: 768px) {
+    display: flex;
+  }
+`;
+
+const MobileHomeButton = styled(Link)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  text-decoration: none;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: rgba(102, 126, 234, 0.2);
+    transform: scale(1.05);
   }
 `;
 
@@ -176,9 +205,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <NavLink to="/javascript" onClick={closeMobileMenu}>JavaScript</NavLink>
             <NavLink to="/ai-custom" onClick={closeMobileMenu}>🤖 AI Custom</NavLink>
           </NavLinks>
-          <MobileMenuButton onClick={toggleMobileMenu}>
-            {isMobileMenuOpen ? '✕' : '☰'}
-          </MobileMenuButton>
+          <MobileControls>
+            <MobileHomeButton to="/">
+              🏠
+            </MobileHomeButton>
+            <MobileMenuButton onClick={toggleMobileMenu}>
+              {isMobileMenuOpen ? '✕' : '☰'}
+            </MobileMenuButton>
+          </MobileControls>
         </Nav>
       </Header>
       
