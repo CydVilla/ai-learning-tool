@@ -188,20 +188,16 @@ Use this exact structure:
       // Validate and format questions
       return questions.map((q: any, index: number) => ({
         id: q.id || `mc_${track}_${difficulty}_${Date.now()}_${index}`,
-        question: q.question || q.content || `Generated question ${index + 1}`,
+        content: q.question || q.content || `Generated question ${index + 1}`,
         options: q.options || ['Option A', 'Option B', 'Option C', 'Option D'],
         correctAnswer: q.correctAnswer || q.options?.[0] || 'Option A',
         explanation: q.explanation || 'No explanation provided.',
-        codeExample: q.codeExample || null,
+        points: q.xp || q.points || (difficulty === 'beginner' ? 15 : difficulty === 'intermediate' ? 25 : 35),
         difficulty: q.difficulty || difficulty,
         track: q.track || track,
-        xp: q.xp || 10,
-        feedback: q.feedback || {
-          correct: 'Great job!',
-          incorrect: 'Not quite right. Here\'s why...'
-        },
-        type: 'multiple-choice' as QuestionType
-      }));
+        type: 'multiple-choice' as QuestionType,
+        tags: [topic || 'general', difficulty, 'ai-generated', 'custom']
+      } as Question));
     } catch (error) {
       console.error('Error generating multiple choice questions:', error);
       throw error;
