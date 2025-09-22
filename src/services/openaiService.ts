@@ -55,10 +55,18 @@ class OpenAIService {
     // Check for API key in environment variables
     this.apiKey = process.env.REACT_APP_OPENAI_API_KEY || '';
     
+    // Debug information for deployment troubleshooting
+    console.log('🔧 OpenAI Service Debug Info:');
+    console.log('  - API Key exists:', !!this.apiKey);
+    console.log('  - API Key length:', this.apiKey?.length || 0);
+    console.log('  - API Key prefix:', this.apiKey ? this.apiKey.substring(0, 7) + '...' : 'none');
+    console.log('  - Environment:', process.env.NODE_ENV);
+    console.log('  - All REACT_APP env vars:', Object.keys(process.env).filter(key => key.startsWith('REACT_APP')));
+    
     if (this.apiKey) {
-      console.log('OpenAI service initialized with API key');
+      console.log('✅ OpenAI service initialized with API key');
     } else {
-      console.log('OpenAI service initialized in demo mode - using mock responses');
+      console.log('⚠️ OpenAI service initialized in demo mode - using mock responses');
     }
   }
 
