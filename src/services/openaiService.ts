@@ -1,13 +1,10 @@
 import OpenAI from 'openai';
 import { Question, CodeExercise, LearningTrack, DifficultyLevel, QuestionType } from '../types';
 
+// For demo deployment, we'll use mock responses instead of real OpenAI API
+// Users can add their own API key in a local .env file for full functionality
 const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
-
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true // Required for client-side usage
-});
+const openai = null; // Disabled for public demo to prevent API key exposure
 
 interface OpenAIResponse {
   id: string;
@@ -66,12 +63,16 @@ class OpenAIService {
   }
 
   private async makeRequest(messages: any[], temperature: number = 0.7): Promise<OpenAIResponse> {
-    if (!this.apiKey) {
-      throw new Error('OpenAI API key not configured');
+    // For demo deployment, always use fallback responses
+    throw new Error('OpenAI API not available in demo mode - using fallback responses');
+    
+    /* Commented out for demo deployment
+    if (!this.apiKey || !openai) {
+      throw new Error('OpenAI API key not configured - using fallback responses');
     }
 
     try {
-      const completion = await openai.chat.completions.create({
+      const completion = await openai!.chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: messages as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
         temperature,
@@ -105,6 +106,7 @@ class OpenAIService {
       console.error('OpenAI API Error:', error);
       throw new Error(`OpenAI API Error: ${error.message || 'Unknown error'}`);
     }
+    */
   }
 
   /**
